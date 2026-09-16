@@ -1,0 +1,1 @@
+export function Status({ children, tone = "info" }: { children: React.ReactNode; tone?: "info" | "success" | "error" }) { return <p role={tone === "error" ? "alert" : "status"} data-tone={tone}>{children}</p>; }

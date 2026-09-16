@@ -1,0 +1,1 @@
+export function ErrorSummary({ errors }: { errors: string[] }) { if (!errors.length) return null; return <section aria-labelledby="error-summary" role="alert" tabIndex={-1}><h2 id="error-summary">Please fix the following</h2><ul>{errors.map((error) => <li key={error}>{error}</li>)}</ul></section>; }

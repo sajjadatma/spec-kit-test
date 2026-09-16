@@ -1,0 +1,10 @@
+CREATE TYPE "Role" AS ENUM ('SUPER_ADMIN', 'ADMIN', 'PRODUCT_MANAGER', 'USER');
+CREATE TYPE "Approval" AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
+CREATE TYPE "Locale" AS ENUM ('fa', 'en');
+CREATE TYPE "AuditAction" AS ENUM ('ACCOUNT_CREATED', 'ACCOUNT_APPROVED', 'ACCOUNT_REJECTED', 'ACCOUNT_DISABLED', 'ACCOUNT_ENABLED', 'ROLE_CHANGED', 'SECURITY_EVENT');
+CREATE TABLE "User" ("id" uuid PRIMARY KEY, "displayName" varchar(100) NOT NULL, "email" varchar(320) NOT NULL, "emailNormalized" varchar(320) NOT NULL UNIQUE, "passwordHash" text NOT NULL, "role" "Role" NOT NULL DEFAULT 'USER', "approval" "Approval" NOT NULL DEFAULT 'PENDING', "disabledAt" timestamptz, "locale" "Locale" NOT NULL DEFAULT 'en', "authVersion" integer NOT NULL DEFAULT 0, "revision" integer NOT NULL DEFAULT 0, "createdAt" timestamptz NOT NULL DEFAULT now(), "updatedAt" timestamptz NOT NULL DEFAULT now());
+CREATE INDEX "User_role_approval_disabledAt_idx" ON "User" ("role", "approval", "disabledAt");
+CREATE TABLE "GovernanceLock" ("id" text PRIMARY KEY, "revision" integer NOT NULL DEFAULT 0, "createdAt" timestamptz NOT NULL DEFAULT now(), "updatedAt" timestamptz NOT NULL DEFAULT now());
+INSERT INTO "GovernanceLock" ("id") VALUES ('governance');
+CREATE TABLE "AuditEvent" ("id" uuid PRIMARY KEY, "actorId" uuid REFERENCES "User"("id") ON DELETE RESTRICT, "action" "AuditAction" NOT NULL, "targetType" varchar(80) NOT NULL, "targetIdentifier" varchar(160) NOT NULL, "before" jsonb, "after" jsonb, "correlationId" varchar(100), "createdAt" timestamptz NOT NULL DEFAULT now());
+CREATE INDEX "AuditEvent_targetType_targetIdentifier_idx" ON "AuditEvent" ("targetType", "targetIdentifier");

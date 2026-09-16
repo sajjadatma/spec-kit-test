@@ -1,0 +1,162 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  PRODUCT_MANAGER
+  USER
+}
+enum Approval {
+  PENDING
+  APPROVED
+  REJECTED
+}
+enum Locale {
+  fa
+  en
+}
+enum AuditAction {
+  ACCOUNT_CREATED
+  ACCOUNT_APPROVED
+  ACCOUNT_REJECTED
+  ACCOUNT_DISABLED
+  ACCOUNT_ENABLED
+  ROLE_CHANGED
+  SECURITY_EVENT
+}
+enum EmailStatus {
+  QUEUED
+  SENDING
+  SENT
+  FAILED
+  EXPIRED
+}
+
+model User {
+  id              String                  @id @default(uuid()) @db.Uuid
+  displayName     String                  @db.VarChar(100)
+  email           String                  @db.VarChar(320)
+  emailNormalized String                  @unique @db.VarChar(320)
+  passwordHash    String
+  role            Role                    @default(USER)
+  approval        Approval                @default(PENDING)
+  disabledAt      DateTime?               @db.Timestamptz(6)
+  locale          Locale                  @default(en)
+  authVersion     Int                     @default(0)
+  revision        Int                     @default(0)
+  createdAt       DateTime                @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime                @updatedAt @db.Timestamptz(6)
+  sessions        AuthenticationSession[]
+  resets          PasswordReset[]
+  audits          AuditEvent[]
+  receipts        IdempotencyReceipt[]
+  @@index([role, approval, disabledAt])
+}
+
+model GovernanceLock {
+  id        String   @id @default("governance")
+  revision  Int      @default(0)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+}
+
+model AuditEvent {
+  id               String      @id @default(uuid()) @db.Uuid
+  actorId          String?     @db.Uuid
+  action           AuditAction
+  targetType       String      @db.VarChar(80)
+  targetIdentifier String      @db.VarChar(160)
+  before           Json?
+  after            Json?
+  correlationId    String?     @db.VarChar(100)
+  createdAt        DateTime    @default(now()) @db.Timestamptz(6)
+  actor            User?       @relation(fields: [actorId], references: [id], onDelete: Restrict)
+  @@index([targetType, targetIdentifier])
+  @@index([createdAt])
+}
+
+model AuthenticationSession {
+  id                 String         @id @default(uuid()) @db.Uuid
+  userId             String         @db.Uuid
+  familyExpiresAt    DateTime       @db.Timestamptz(6)
+  revokedAt          DateTime?      @db.Timestamptz(6)
+  revokedReason      String?        @db.VarChar(80)
+  authVersionAtIssue Int
+  createdAt          DateTime       @default(now()) @db.Timestamptz(6)
+  user               User           @relation(fields: [userId], references: [id], onDelete: Restrict)
+  refreshTokens      RefreshToken[]
+  receipts           IdempotencyReceipt[]
+  @@index([userId, revokedAt])
+}
+
+model RefreshToken {
+  id            String                 @id @default(uuid()) @db.Uuid
+  sessionId     String                 @db.Uuid
+  tokenHash     String                 @unique
+  issuedAt      DateTime               @default(now()) @db.Timestamptz(6)
+  expiresAt     DateTime               @db.Timestamptz(6)
+  consumedAt    DateTime?              @db.Timestamptz(6)
+  replacementId String?                @unique @db.Uuid
+  session       AuthenticationSession  @relation(fields: [sessionId], references: [id], onDelete: Restrict)
+  replacement   RefreshToken?          @relation("RefreshReplacement", fields: [replacementId], references: [id])
+  replaces      RefreshToken?          @relation("RefreshReplacement")
+  @@index([sessionId, expiresAt])
+}
+
+model PasswordReset {
+  id           String       @id @default(uuid()) @db.Uuid
+  userId       String       @db.Uuid
+  tokenHash    String       @unique
+  issuedAt     DateTime     @default(now()) @db.Timestamptz(6)
+  expiresAt    DateTime     @db.Timestamptz(6)
+  consumedAt   DateTime?    @db.Timestamptz(6)
+  supersededAt DateTime?    @db.Timestamptz(6)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Restrict)
+  email        EmailOutbox?
+  @@index([userId, expiresAt])
+}
+
+model EmailOutbox {
+  id                   String      @id @default(uuid()) @db.Uuid
+  resetId              String      @unique @db.Uuid
+  encryptedPayload     String?
+  encryptionKeyVersion Int
+  status               EmailStatus @default(QUEUED)
+  attemptCount         Int         @default(0)
+  nextAttemptAt        DateTime    @default(now()) @db.Timestamptz(6)
+  leaseUntil           DateTime?   @db.Timestamptz(6)
+  leaseToken           String?     @db.Uuid
+  lastSafeErrorCode    String?     @db.VarChar(80)
+  createdAt            DateTime    @default(now()) @db.Timestamptz(6)
+  reset                PasswordReset @relation(fields: [resetId], references: [id], onDelete: Restrict)
+}
+
+model RateLimitBucket {
+  id          String   @id @default(uuid()) @db.Uuid
+  scope       String   @db.VarChar(80)
+  subjectHash String   @db.VarChar(128)
+  windowStart DateTime @db.Timestamptz(6)
+  count       Int      @default(0)
+  expiresAt   DateTime @db.Timestamptz(6)
+  @@unique([scope, subjectHash, windowStart])
+}
+
+model IdempotencyReceipt {
+  id            String                  @id @default(uuid()) @db.Uuid
+  userId        String                  @db.Uuid
+  authSessionId String                  @db.Uuid
+  operation     String                  @db.VarChar(100)
+  key           String                  @db.Uuid
+  payloadHash   String                  @db.VarChar(128)
+  resourceId    String?                 @db.Uuid
+  createdAt     DateTime                @default(now()) @db.Timestamptz(6)
+  user          User                    @relation(fields: [userId], references: [id], onDelete: Restrict)
+  session       AuthenticationSession   @relation(fields: [authSessionId], references: [id], onDelete: Restrict)
+  @@unique([userId, operation, key])
+}

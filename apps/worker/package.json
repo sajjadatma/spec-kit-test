@@ -1,0 +1,6 @@
+{
+  "name": "@industrial-dashboard/worker",
+  "private": true,
+  "scripts": { "dev": "tsx watch src/main.ts", "build": "tsc -p tsconfig.json", "typecheck": "tsc --noEmit" },
+  "dependencies": { "@industrial-dashboard/backend": "workspace:*", "@nestjs/common": "^11.1.6", "@nestjs/core": "^11.1.6", "reflect-metadata": "^0.2.2" }
+}

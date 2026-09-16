@@ -1,0 +1,7 @@
+{
+  "name": "@industrial-dashboard/backend",
+  "private": true,
+  "scripts": { "build": "tsc -p tsconfig.json", "typecheck": "tsc --noEmit" },
+  "dependencies": { "@prisma/adapter-pg": "^7.0.1", "@prisma/client": "^7.0.1", "argon2": "^0.44.0", "decimal.js": "^10.6.0", "pg": "^8.16.3", "zod": "^4.1.12" },
+  "devDependencies": { "@types/pg": "^8.15.5" }
+}

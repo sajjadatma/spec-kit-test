@@ -1,0 +1,2 @@
+"use client";
+export function ConfirmDialog({ open, title, description, onConfirm, onCancel }: { open: boolean; title: string; description: string; onConfirm(): void; onCancel(): void }) { if (!open) return null; return <div role="dialog" aria-modal="true" aria-labelledby="confirm-title"><h2 id="confirm-title">{title}</h2><p>{description}</p><button onClick={onConfirm}>Confirm</button><button onClick={onCancel}>Cancel</button></div>; }

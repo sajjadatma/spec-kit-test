@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; font-family: Arial, sans-serif; background: #f8f9fa; color: #1c1b1f; }
+button, input, select, textarea { min-height: 48px; font: inherit; }
+*:focus-visible { outline: 3px solid #005ac1; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }

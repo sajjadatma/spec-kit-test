@@ -1,0 +1,4 @@
+import type { ApiEnvelope, ApiError } from "@industrial-dashboard/contracts";
+const origin = process.env.NEXT_PUBLIC_API_ORIGIN ?? "http://localhost:3001/api/v1";
+export class ApiClientError extends Error { constructor(readonly code: string, message: string, readonly status: number) { super(message); } }
+export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> { const response = await fetch(`${origin}${path}`, { ...init, credentials: "include", cache: "no-store", headers: { Accept: "application/json", ...init.headers } }); if (!response.ok) { const body = await response.json().catch(() => null) as ApiError | null; throw new ApiClientError(body?.error.code ?? "REQUEST_FAILED", body?.error.message ?? "Request failed", response.status); } return (await response.json() as ApiEnvelope<T>).data; }
