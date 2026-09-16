@@ -12,5 +12,6 @@ test-results/
 *.log
 *.tmp
 *.swp
+*.tsbuildinfo
 .DS_Store
 private-media/
