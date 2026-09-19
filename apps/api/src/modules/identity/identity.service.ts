@@ -14,6 +14,7 @@ import {
   ProductQueryService,
   DraftService,
   AttemptService,
+  AcceptAttemptService,
   createPrismaClient,
   LocalStorageAdapter,
   StorageService,
@@ -40,6 +41,7 @@ export class IdentityService implements OnModuleDestroy {
   private readonly storage = new StorageService(new LocalStorageAdapter(process.env.STORAGE_ROOT ?? "storage"));
   private readonly drafts = new DraftService(this.prisma);
   private readonly attempts = new AttemptService(this.prisma);
+  private readonly acceptAttempts = new AcceptAttemptService(this.attempts);
 
   register(displayName: string, email: string, password: string, locale: "fa" | "en") {
     return this.registration.register(displayName, email, password, locale);
@@ -106,7 +108,7 @@ export class IdentityService implements OnModuleDestroy {
   searchProducts(actor:never,query:object){return this.productQuery.search(actor,query as never)}
   getDraft(id:string){return this.drafts.get(id)} saveDraft(id:string,input:object,revision:number){return this.drafts.save(id,input as never,revision)} discardDraft(id:string){return this.drafts.discard(id)}
   async attachRoomAsset(ownerId:string,assetId:string,revision:number){const asset=await this.prisma.fileAsset.findFirst({where:{id:assetId,creatorId:ownerId,status:"READY"}});if(!asset)throw new Error("RECORD_NOT_FOUND");const draft=await this.drafts.get(ownerId);return this.drafts.save(ownerId,{floorSelected:draft.floorSelected,wallSelected:draft.wallSelected,floorProductId:draft.floorProductId,wallProductId:draft.wallProductId,roomAssetId:assetId},revision)}
-  async submitAttempt(id:string,consentVersion?:string){return this.attempts.submit(id,await this.drafts.get(id),consentVersion)} getAttempt(ownerId:string,id:string){return this.attempts.get(ownerId,id)}
+  async submitAttempt(id:string,consentVersion?:string){return this.acceptAttempts.accept({ownerId:id,draft:await this.drafts.get(id),consentVersion:consentVersion??""})} getAttempt(ownerId:string,id:string){return this.attempts.get(ownerId,id)}
   async submitAttemptIdempotent(ownerId:string, sessionId:string, key:string, consentVersion:string){
     const existing=await this.prisma.idempotencyReceipt.findUnique({where:{userId_operation_key:{userId:ownerId,operation:"visualization.submit",key}}});
     if(existing?.resourceId)return this.getAttempt(ownerId,existing.resourceId);

@@ -8,9 +8,9 @@ export class PrismaJobPort implements JobPort {
     const now = new Date();
     const leaseUntil = new Date(now.getTime() + 60_000);
     return this.prisma.$transaction(async (tx) => {
-      const job = await tx.backgroundJob.findFirst({ where: { kind, OR: [{ status: "QUEUED" }, { status: "RUNNING", leaseUntil: { lt: now } }] }, orderBy: { createdAt: "asc" } });
+      const job = await tx.backgroundJob.findFirst({ where: { kind, attempts: { lt: 3 }, OR: [{ status: "QUEUED" }, { status: "RUNNING", leaseUntil: { lt: now } }] }, orderBy: { createdAt: "asc" } });
       if (!job) return null;
-      const claimed = await tx.backgroundJob.updateMany({ where: { id: job.id, OR: [{ status: "QUEUED" }, { status: "RUNNING", leaseUntil: { lt: now } }] }, data: { status: "RUNNING", workerId, leaseUntil, fencingToken: { increment: 1 }, attempts: { increment: 1 } } });
+      const claimed = await tx.backgroundJob.updateMany({ where: { id: job.id, attempts: { lt: 3 }, OR: [{ status: "QUEUED" }, { status: "RUNNING", leaseUntil: { lt: now } }] }, data: { status: "RUNNING", workerId, leaseUntil, fencingToken: { increment: 1 }, attempts: { increment: 1 } } });
       if (!claimed.count) return null;
       const current = await tx.backgroundJob.findUniqueOrThrow({ where: { id: job.id } });
       return { id: current.id, kind, fencingToken: current.fencingToken };

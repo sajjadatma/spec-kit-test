@@ -29,14 +29,14 @@ export class AttemptService {
       const session = await tx.visualizationSession.create({ data: { ownerId } });
       if (!draft.roomAssetId) throw new Error("ROOM_IMAGE_REQUIRED");
       const selected = [["FLOOR", draft.floorProductId], ["WALL", draft.wallProductId]] as const;
-      const references = [] as { surface: string; productId: string; assetId: string }[];
+      const references = [] as { surface: string; productId: string; assetId: string; productSnapshot: object }[];
       for (const [surface, productId] of selected) {
         if (!productId) continue;
-        const product = await tx.product.findFirst({ where: { id: productId, active: true, archivedAt: null }, select: { primaryImageId: true } });
+        const product = await tx.product.findFirst({ where: { id: productId, active: true, archivedAt: null }, select: { primaryImageId: true, name: true, sku: true, widthMm: true, heightMm: true, material: true, finish: true, color: true, texture: true, floorCompatible: true, wallCompatible: true } });
         if (!product?.primaryImageId) throw new Error("PRODUCT_REFERENCE_REQUIRED");
         const image = await tx.productImage.findUnique({ where: { id: product.primaryImageId }, select: { assetId: true } });
         if (!image) throw new Error("PRODUCT_REFERENCE_REQUIRED");
-        references.push({ surface, productId, assetId: image.assetId });
+        references.push({ surface, productId, assetId: image.assetId, productSnapshot: { name: product.name, sku: product.sku, widthMm: product.widthMm.toString(), heightMm: product.heightMm.toString(), material: product.material, finish: product.finish, color: product.color, texture: product.texture, floorCompatible: product.floorCompatible, wallCompatible: product.wallCompatible } });
       }
       const attempt = await tx.generationAttempt.create({ data: { id: randomUUID(), ownerId, sessionId: session.id, status: "PREPARING", deadlineAt: new Date(Date.now() + 600_000), consentVersion, consentAcceptedAt: new Date(), roomAssetId: draft.roomAssetId } });
       await tx.attemptSurface.createMany({ data: references.map((reference) => ({ attemptId: attempt.id, ...reference })) });

@@ -40,3 +40,5 @@ export { PersistentDeadlineService } from "./visualization/deadline.service.js";
 export { GenerationRecoveryService } from "./visualization/recovery.service.js";
 
 export { VariationService } from "./visualization/variation.service.js";
+
+export { AcceptAttemptService } from "./visualization/accept-attempt.service.js";

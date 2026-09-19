@@ -25,6 +25,9 @@ export async function persistGeneration(
     return "FAILED";
   }
   await prisma.generationAttempt.update({ where: { id: record.attempt.id, status: "PREPARING" }, data: { status: "GENERATING", revision: { increment: 1 } } });
+  const heartbeat = setInterval(() => {
+    void prisma.backgroundJob.updateMany({ where: { id: job.id, status: "RUNNING", fencingToken: job.fencingToken }, data: { leaseUntil: new Date(Date.now() + 60_000) } });
+  }, 15_000);
   try {
     const result = await service.generate(input);
     if (result.image.byteLength > 25 * 1024 * 1024) throw new Error("GENERATION_RESULT_INVALID");
@@ -40,5 +43,7 @@ export async function persistGeneration(
     const code = error instanceof Error && error.message === "GENERATION_TIMEOUT" ? "GENERATION_TIMEOUT" : "GENERATION_FAILED";
     await prisma.generationAttempt.updateMany({ where: { id: record.attempt.id, status: { in: ["PREPARING", "GENERATING"] } }, data: { status: "FAILED", finishedAt: new Date(), safeErrorCode: code, revision: { increment: 1 } } });
     return "FAILED";
+  } finally {
+    clearInterval(heartbeat);
   }
 }

@@ -12,15 +12,18 @@ enum Role {
   PRODUCT_MANAGER
   USER
 }
+
 enum Approval {
   PENDING
   APPROVED
   REJECTED
 }
+
 enum Locale {
   fa
   en
 }
+
 enum AuditAction {
   ACCOUNT_CREATED
   ACCOUNT_APPROVED
@@ -30,6 +33,7 @@ enum AuditAction {
   ROLE_CHANGED
   SECURITY_EVENT
 }
+
 enum EmailStatus {
   QUEUED
   SENDING
@@ -37,11 +41,13 @@ enum EmailStatus {
   FAILED
   EXPIRED
 }
+
 enum ProductCategory {
   CERAMIC_TILE
   PORCELAIN_TILE
   MOSAIC_TILE
 }
+
 enum ProductColor {
   WHITE
   BLACK
@@ -55,6 +61,7 @@ enum ProductColor {
   MULTICOLOR
   OTHER
 }
+
 enum ProductMaterial {
   CERAMIC
   PORCELAIN
@@ -62,6 +69,7 @@ enum ProductMaterial {
   NATURAL_STONE
   MIXED
 }
+
 enum ProductFinish {
   MATTE
   POLISHED
@@ -70,21 +78,25 @@ enum ProductFinish {
   TEXTURED
   OTHER
 }
+
 enum ProductSuitability {
   INDOOR
   OUTDOOR
   BOTH
 }
+
 enum UnitOfSale {
   SQUARE_METER
   PIECE
   BOX
 }
+
 enum Currency {
   IRR
   TOMAN
   USD
 }
+
 enum AssetStatus {
   STAGED
   READY
@@ -92,12 +104,14 @@ enum AssetStatus {
   DELETING
   DELETED
 }
+
 enum AttemptStatus {
   PREPARING
   GENERATING
   COMPLETED
   FAILED
 }
+
 enum JobStatus {
   QUEUED
   RUNNING
@@ -106,197 +120,211 @@ enum JobStatus {
 }
 
 model User {
-  id              String                  @id @default(uuid()) @db.Uuid
-  displayName     String                  @db.VarChar(100)
-  email           String                  @db.VarChar(320)
-  emailNormalized String                  @unique @db.VarChar(320)
-  passwordHash    String
-  role            Role                    @default(USER)
-  approval        Approval                @default(PENDING)
-  disabledAt      DateTime?               @db.Timestamptz(6)
-  locale          Locale                  @default(en)
-  authVersion     Int                     @default(0)
-  revision        Int                     @default(0)
-  createdAt       DateTime                @default(now()) @db.Timestamptz(6)
-  updatedAt       DateTime                @updatedAt @db.Timestamptz(6)
-  sessions        AuthenticationSession[]
-  resets          PasswordReset[]
-  audits          AuditEvent[]
-  receipts        IdempotencyReceipt[]
-  createdProducts Product[] @relation("ProductCreatedBy")
-  updatedProducts Product[] @relation("ProductUpdatedBy")
-  exchangeRates   ExchangeRate[]
-  assets          FileAsset[]
+  id                    String                  @id @default(uuid()) @db.Uuid
+  displayName           String                  @db.VarChar(100)
+  email                 String                  @db.VarChar(320)
+  emailNormalized       String                  @unique @db.VarChar(320)
+  passwordHash          String
+  role                  Role                    @default(USER)
+  approval              Approval                @default(PENDING)
+  disabledAt            DateTime?               @db.Timestamptz(6)
+  locale                Locale                  @default(en)
+  authVersion           Int                     @default(0)
+  revision              Int                     @default(0)
+  createdAt             DateTime                @default(now()) @db.Timestamptz(6)
+  updatedAt             DateTime                @updatedAt @db.Timestamptz(6)
+  sessions              AuthenticationSession[]
+  resets                PasswordReset[]
+  audits                AuditEvent[]
+  receipts              IdempotencyReceipt[]
+  createdProducts       Product[]               @relation("ProductCreatedBy")
+  updatedProducts       Product[]               @relation("ProductUpdatedBy")
+  exchangeRates         ExchangeRate[]
+  assets                FileAsset[]
   visualizationSessions VisualizationSession[]
-  generationAttempts GenerationAttempt[]
-  roomDraft RoomDraft?
+  generationAttempts    GenerationAttempt[]
+  roomDraft             RoomDraft?
+
   @@index([role, approval, disabledAt])
 }
 
 model Product {
-  id String @id @default(uuid()) @db.Uuid
-  name String @db.VarChar(150)
-  sku String @db.VarChar(64)
-  skuNormalized String @unique @db.VarChar(64)
-  category ProductCategory
-  brand String? @db.VarChar(100)
-  collection String? @db.VarChar(100)
-  color ProductColor
-  material ProductMaterial
-  widthMm Decimal @db.Decimal(12,2)
-  heightMm Decimal @db.Decimal(12,2)
-  thicknessMm Decimal? @db.Decimal(12,2)
-  finish ProductFinish
-  texture String? @db.VarChar(40)
+  id              String             @id @default(uuid()) @db.Uuid
+  name            String             @db.VarChar(150)
+  sku             String             @db.VarChar(64)
+  skuNormalized   String             @unique @db.VarChar(64)
+  category        ProductCategory
+  brand           String?            @db.VarChar(100)
+  collection      String?            @db.VarChar(100)
+  color           ProductColor
+  material        ProductMaterial
+  widthMm         Decimal            @db.Decimal(12, 2)
+  heightMm        Decimal            @db.Decimal(12, 2)
+  thicknessMm     Decimal?           @db.Decimal(12, 2)
+  finish          ProductFinish
+  texture         String?            @db.VarChar(40)
   floorCompatible Boolean
-  wallCompatible Boolean
-  suitability ProductSuitability
-  slipResistance String? @db.VarChar(100)
-  rectified Boolean
-  countryOfOrigin String? @db.VarChar(2)
-  basePrice Decimal? @db.Decimal(24,2)
-  baseCurrency Currency?
-  stockQuantity Decimal? @db.Decimal(24,3)
-  unitOfSale UnitOfSale
-  description String? @db.VarChar(5000)
-  active Boolean @default(false)
-  archivedAt DateTime? @db.Timestamptz(6)
-  revision Int @default(0)
-  everVisualized Boolean @default(false)
-  primaryImageId String? @unique @db.Uuid
-  createdById String @db.Uuid
-  updatedById String @db.Uuid
-  createdAt DateTime @default(now()) @db.Timestamptz(6)
-  updatedAt DateTime @updatedAt @db.Timestamptz(6)
-  createdBy User @relation("ProductCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
-  updatedBy User @relation("ProductUpdatedBy", fields: [updatedById], references: [id], onDelete: Restrict)
-  images ProductImage[]
+  wallCompatible  Boolean
+  suitability     ProductSuitability
+  slipResistance  String?            @db.VarChar(100)
+  rectified       Boolean
+  countryOfOrigin String?            @db.VarChar(2)
+  basePrice       Decimal?           @db.Decimal(24, 2)
+  baseCurrency    Currency?
+  stockQuantity   Decimal?           @db.Decimal(24, 3)
+  unitOfSale      UnitOfSale
+  description     String?            @db.VarChar(5000)
+  active          Boolean            @default(false)
+  archivedAt      DateTime?          @db.Timestamptz(6)
+  revision        Int                @default(0)
+  everVisualized  Boolean            @default(false)
+  primaryImageId  String?            @unique @db.Uuid
+  createdById     String             @db.Uuid
+  updatedById     String             @db.Uuid
+  createdAt       DateTime           @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime           @updatedAt @db.Timestamptz(6)
+  createdBy       User               @relation("ProductCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  updatedBy       User               @relation("ProductUpdatedBy", fields: [updatedById], references: [id], onDelete: Restrict)
+  images          ProductImage[]
   attemptSurfaces AttemptSurface[]
+
   @@index([active, archivedAt, category])
   @@index([name, sku])
 }
 
 model FileAsset {
- id String @id @default(uuid()) @db.Uuid
- storageKey String @unique
- contentHash String @db.VarChar(64)
- mediaType String @db.VarChar(50)
- byteSize Int
- width Int
- height Int
- status AssetStatus @default(STAGED)
- creatorId String @db.Uuid
- createdAt DateTime @default(now()) @db.Timestamptz(6)
- validatedAt DateTime? @db.Timestamptz(6)
- rejectedCode String? @db.VarChar(80)
- creator User @relation(fields:[creatorId],references:[id])
- images ProductImage[]
- roomDraftImage RoomDraft? @relation("RoomDraftImage")
- attemptSurfaces AttemptSurface[]
- attemptRoomAssets GenerationAttempt[] @relation("AttemptRoomAsset")
+  id                String              @id @default(uuid()) @db.Uuid
+  storageKey        String              @unique
+  contentHash       String              @db.VarChar(64)
+  mediaType         String              @db.VarChar(50)
+  byteSize          Int
+  width             Int
+  height            Int
+  status            AssetStatus         @default(STAGED)
+  creatorId         String              @db.Uuid
+  createdAt         DateTime            @default(now()) @db.Timestamptz(6)
+  validatedAt       DateTime?           @db.Timestamptz(6)
+  rejectedCode      String?             @db.VarChar(80)
+  creator           User                @relation(fields: [creatorId], references: [id])
+  images            ProductImage[]
+  roomDraftImage    RoomDraft?          @relation("RoomDraftImage")
+  attemptSurfaces   AttemptSurface[]
+  attemptRoomAssets GenerationAttempt[] @relation("AttemptRoomAsset")
 }
+
 model ProductImage {
- id String @id @default(uuid()) @db.Uuid
- productId String @db.Uuid
- assetId String @db.Uuid
- contentHash String @db.VarChar(64)
- position Int
- createdAt DateTime @default(now()) @db.Timestamptz(6)
- product Product @relation(fields:[productId],references:[id],onDelete:Restrict)
- asset FileAsset @relation(fields:[assetId],references:[id],onDelete:Restrict)
- @@unique([productId,contentHash])
- @@unique([productId,position])
+  id          String    @id @default(uuid()) @db.Uuid
+  productId   String    @db.Uuid
+  assetId     String    @db.Uuid
+  contentHash String    @db.VarChar(64)
+  position    Int
+  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Restrict)
+  asset       FileAsset @relation(fields: [assetId], references: [id], onDelete: Restrict)
+
+  @@unique([productId, contentHash])
+  @@unique([productId, position])
 }
 
 model VisualizationSession {
- id String @id @default(uuid()) @db.Uuid
- ownerId String @db.Uuid
- createdAt DateTime @default(now()) @db.Timestamptz(6)
- deletedAt DateTime? @db.Timestamptz(6)
- owner User @relation(fields:[ownerId],references:[id])
- attempts GenerationAttempt[]
+  id        String              @id @default(uuid()) @db.Uuid
+  ownerId   String              @db.Uuid
+  createdAt DateTime            @default(now()) @db.Timestamptz(6)
+  deletedAt DateTime?           @db.Timestamptz(6)
+  owner     User                @relation(fields: [ownerId], references: [id])
+  attempts  GenerationAttempt[]
 }
+
 model RoomDraft {
- id String @id @default(uuid()) @db.Uuid
- ownerId String @unique @db.Uuid
- floorSelected Boolean @default(false)
- wallSelected Boolean @default(false)
- floorProductId String? @db.Uuid
- wallProductId String? @db.Uuid
- roomAssetId String? @unique @db.Uuid
- revision Int @default(0)
- expiresAt DateTime @db.Timestamptz(6)
- owner User @relation(fields:[ownerId],references:[id],onDelete:Cascade)
- roomAsset FileAsset? @relation("RoomDraftImage",fields:[roomAssetId],references:[id],onDelete:Restrict)
- @@index([expiresAt])
+  id             String     @id @default(uuid()) @db.Uuid
+  ownerId        String     @unique @db.Uuid
+  floorSelected  Boolean    @default(false)
+  wallSelected   Boolean    @default(false)
+  floorProductId String?    @db.Uuid
+  wallProductId  String?    @db.Uuid
+  roomAssetId    String?    @unique @db.Uuid
+  revision       Int        @default(0)
+  expiresAt      DateTime   @db.Timestamptz(6)
+  owner          User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  roomAsset      FileAsset? @relation("RoomDraftImage", fields: [roomAssetId], references: [id], onDelete: Restrict)
+
+  @@index([expiresAt])
 }
+
 model GenerationAttempt {
- id String @id @default(uuid()) @db.Uuid
- ownerId String @db.Uuid
- sessionId String @db.Uuid
- status AttemptStatus @default(PREPARING)
- acceptedAt DateTime @default(now()) @db.Timestamptz(6)
- deadlineAt DateTime @db.Timestamptz(6)
- finishedAt DateTime? @db.Timestamptz(6)
- safeErrorCode String? @db.VarChar(80)
- revision Int @default(0)
- dispatchFence Int @default(0)
- consentVersion String @db.VarChar(64)
- consentAcceptedAt DateTime @db.Timestamptz(6)
- resultStorageKey String? @db.VarChar(512)
- resultMediaType String? @db.VarChar(50)
- roomAssetId String @db.Uuid
- job BackgroundJob?
- surfaces AttemptSurface[]
- roomAsset FileAsset @relation("AttemptRoomAsset",fields:[roomAssetId],references:[id],onDelete:Restrict)
- owner User @relation(fields:[ownerId],references:[id])
- session VisualizationSession @relation(fields:[sessionId],references:[id])
- @@index([ownerId,status])
+  id                String               @id @default(uuid()) @db.Uuid
+  ownerId           String               @db.Uuid
+  sessionId         String               @db.Uuid
+  status            AttemptStatus        @default(PREPARING)
+  acceptedAt        DateTime             @default(now()) @db.Timestamptz(6)
+  deadlineAt        DateTime             @db.Timestamptz(6)
+  finishedAt        DateTime?            @db.Timestamptz(6)
+  safeErrorCode     String?              @db.VarChar(80)
+  revision          Int                  @default(0)
+  dispatchFence     Int                  @default(0)
+  consentVersion    String               @db.VarChar(64)
+  consentAcceptedAt DateTime             @db.Timestamptz(6)
+  resultStorageKey  String?              @db.VarChar(512)
+  resultMediaType   String?              @db.VarChar(50)
+  roomAssetId       String               @db.Uuid
+  job               BackgroundJob?
+  surfaces          AttemptSurface[]
+  roomAsset         FileAsset            @relation("AttemptRoomAsset", fields: [roomAssetId], references: [id], onDelete: Restrict)
+  owner             User                 @relation(fields: [ownerId], references: [id])
+  session           VisualizationSession @relation(fields: [sessionId], references: [id])
+
+  @@index([ownerId, status])
 }
+
 model AttemptSurface {
- id String @id @default(uuid()) @db.Uuid
- attemptId String @db.Uuid
- surface String @db.VarChar(8)
- productId String @db.Uuid
- assetId String @db.Uuid
- createdAt DateTime @default(now()) @db.Timestamptz(6)
- attempt GenerationAttempt @relation(fields:[attemptId],references:[id],onDelete:Cascade)
- product Product @relation(fields:[productId],references:[id],onDelete:Restrict)
- asset FileAsset @relation(fields:[assetId],references:[id],onDelete:Restrict)
- @@unique([attemptId,surface])
+  id        String            @id @default(uuid()) @db.Uuid
+  attemptId String            @db.Uuid
+  surface   String            @db.VarChar(8)
+  productId String            @db.Uuid
+  assetId   String            @db.Uuid
+  productSnapshot Json
+  createdAt DateTime          @default(now()) @db.Timestamptz(6)
+  attempt   GenerationAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  product   Product           @relation(fields: [productId], references: [id], onDelete: Restrict)
+  asset     FileAsset         @relation(fields: [assetId], references: [id], onDelete: Restrict)
+
+  @@unique([attemptId, surface])
 }
 
 model ExchangeRate {
-  id String @id @default(uuid()) @db.Uuid
-  rialsPerUsd Decimal @db.Decimal(24,6)
-  previousRateId String? @db.Uuid
-  actorId String @db.Uuid
-  effectiveAt DateTime @default(now()) @db.Timestamptz(6)
-  actor User @relation(fields: [actorId], references: [id], onDelete: Restrict)
-  previousRate ExchangeRate? @relation("RatePrevious", fields: [previousRateId], references: [id])
-  nextRates ExchangeRate[] @relation("RatePrevious")
+  id             String           @id @default(uuid()) @db.Uuid
+  rialsPerUsd    Decimal          @db.Decimal(24, 6)
+  previousRateId String?          @db.Uuid
+  actorId        String           @db.Uuid
+  effectiveAt    DateTime         @default(now()) @db.Timestamptz(6)
+  actor          User             @relation(fields: [actorId], references: [id], onDelete: Restrict)
+  previousRate   ExchangeRate?    @relation("RatePrevious", fields: [previousRateId], references: [id])
+  nextRates      ExchangeRate[]   @relation("RatePrevious")
   pricingSetting PricingSettings? @relation("CurrentPricingRate")
 }
+
 model PricingSettings {
-  id String @id @default("pricing")
-  currentRateId String? @unique @db.Uuid
-  revision Int @default(0)
-  currentRate ExchangeRate? @relation("CurrentPricingRate", fields: [currentRateId], references: [id], onDelete: Restrict)
+  id            String        @id @default("pricing")
+  currentRateId String?       @unique @db.Uuid
+  revision      Int           @default(0)
+  currentRate   ExchangeRate? @relation("CurrentPricingRate", fields: [currentRateId], references: [id], onDelete: Restrict)
 }
+
 model BackgroundJob {
- id String @id @default(uuid()) @db.Uuid
- kind String @db.VarChar(32)
- status JobStatus @default(QUEUED)
- attemptId String? @unique @db.Uuid
- fencingToken Int @default(0)
- leaseUntil DateTime? @db.Timestamptz(6)
- workerId String? @db.VarChar(100)
- attempts Int @default(0)
- safeErrorCode String? @db.VarChar(80)
- createdAt DateTime @default(now()) @db.Timestamptz(6)
- updatedAt DateTime @updatedAt @db.Timestamptz(6)
- attempt GenerationAttempt? @relation(fields:[attemptId],references:[id],onDelete:Cascade)
- @@index([kind,status,leaseUntil])
+  id            String             @id @default(uuid()) @db.Uuid
+  kind          String             @db.VarChar(32)
+  status        JobStatus          @default(QUEUED)
+  attemptId     String?            @unique @db.Uuid
+  fencingToken  Int                @default(0)
+  leaseUntil    DateTime?          @db.Timestamptz(6)
+  workerId      String?            @db.VarChar(100)
+  attempts      Int                @default(0)
+  safeErrorCode String?            @db.VarChar(80)
+  createdAt     DateTime           @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime           @updatedAt @db.Timestamptz(6)
+  attempt       GenerationAttempt? @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@index([kind, status, leaseUntil])
 }
 
 model GovernanceLock {
@@ -317,35 +345,38 @@ model AuditEvent {
   correlationId    String?     @db.VarChar(100)
   createdAt        DateTime    @default(now()) @db.Timestamptz(6)
   actor            User?       @relation(fields: [actorId], references: [id], onDelete: Restrict)
+
   @@index([targetType, targetIdentifier])
   @@index([createdAt])
 }
 
 model AuthenticationSession {
-  id                 String         @id @default(uuid()) @db.Uuid
-  userId             String         @db.Uuid
-  familyExpiresAt    DateTime       @db.Timestamptz(6)
-  revokedAt          DateTime?      @db.Timestamptz(6)
-  revokedReason      String?        @db.VarChar(80)
+  id                 String               @id @default(uuid()) @db.Uuid
+  userId             String               @db.Uuid
+  familyExpiresAt    DateTime             @db.Timestamptz(6)
+  revokedAt          DateTime?            @db.Timestamptz(6)
+  revokedReason      String?              @db.VarChar(80)
   authVersionAtIssue Int
-  createdAt          DateTime       @default(now()) @db.Timestamptz(6)
-  user               User           @relation(fields: [userId], references: [id], onDelete: Restrict)
+  createdAt          DateTime             @default(now()) @db.Timestamptz(6)
+  user               User                 @relation(fields: [userId], references: [id], onDelete: Restrict)
   refreshTokens      RefreshToken[]
   receipts           IdempotencyReceipt[]
+
   @@index([userId, revokedAt])
 }
 
 model RefreshToken {
-  id            String                 @id @default(uuid()) @db.Uuid
-  sessionId     String                 @db.Uuid
-  tokenHash     String                 @unique
-  issuedAt      DateTime               @default(now()) @db.Timestamptz(6)
-  expiresAt     DateTime               @db.Timestamptz(6)
-  consumedAt    DateTime?              @db.Timestamptz(6)
-  replacementId String?                @unique @db.Uuid
-  session       AuthenticationSession  @relation(fields: [sessionId], references: [id], onDelete: Restrict)
-  replacement   RefreshToken?          @relation("RefreshReplacement", fields: [replacementId], references: [id])
-  replaces      RefreshToken?          @relation("RefreshReplacement")
+  id            String                @id @default(uuid()) @db.Uuid
+  sessionId     String                @db.Uuid
+  tokenHash     String                @unique
+  issuedAt      DateTime              @default(now()) @db.Timestamptz(6)
+  expiresAt     DateTime              @db.Timestamptz(6)
+  consumedAt    DateTime?             @db.Timestamptz(6)
+  replacementId String?               @unique @db.Uuid
+  session       AuthenticationSession @relation(fields: [sessionId], references: [id], onDelete: Restrict)
+  replacement   RefreshToken?         @relation("RefreshReplacement", fields: [replacementId], references: [id])
+  replaces      RefreshToken?         @relation("RefreshReplacement")
+
   @@index([sessionId, expiresAt])
 }
 
@@ -359,21 +390,22 @@ model PasswordReset {
   supersededAt DateTime?    @db.Timestamptz(6)
   user         User         @relation(fields: [userId], references: [id], onDelete: Restrict)
   email        EmailOutbox?
+
   @@index([userId, expiresAt])
 }
 
 model EmailOutbox {
-  id                   String      @id @default(uuid()) @db.Uuid
-  resetId              String      @unique @db.Uuid
+  id                   String        @id @default(uuid()) @db.Uuid
+  resetId              String        @unique @db.Uuid
   encryptedPayload     String?
   encryptionKeyVersion Int
-  status               EmailStatus @default(QUEUED)
-  attemptCount         Int         @default(0)
-  nextAttemptAt        DateTime    @default(now()) @db.Timestamptz(6)
-  leaseUntil           DateTime?   @db.Timestamptz(6)
-  leaseToken           String?     @db.Uuid
-  lastSafeErrorCode    String?     @db.VarChar(80)
-  createdAt            DateTime    @default(now()) @db.Timestamptz(6)
+  status               EmailStatus   @default(QUEUED)
+  attemptCount         Int           @default(0)
+  nextAttemptAt        DateTime      @default(now()) @db.Timestamptz(6)
+  leaseUntil           DateTime?     @db.Timestamptz(6)
+  leaseToken           String?       @db.Uuid
+  lastSafeErrorCode    String?       @db.VarChar(80)
+  createdAt            DateTime      @default(now()) @db.Timestamptz(6)
   reset                PasswordReset @relation(fields: [resetId], references: [id], onDelete: Restrict)
 }
 
@@ -384,19 +416,21 @@ model RateLimitBucket {
   windowStart DateTime @db.Timestamptz(6)
   count       Int      @default(0)
   expiresAt   DateTime @db.Timestamptz(6)
+
   @@unique([scope, subjectHash, windowStart])
 }
 
 model IdempotencyReceipt {
-  id            String                  @id @default(uuid()) @db.Uuid
-  userId        String                  @db.Uuid
-  authSessionId String                  @db.Uuid
-  operation     String                  @db.VarChar(100)
-  key           String                  @db.Uuid
-  payloadHash   String                  @db.VarChar(128)
-  resourceId    String?                 @db.Uuid
-  createdAt     DateTime                @default(now()) @db.Timestamptz(6)
-  user          User                    @relation(fields: [userId], references: [id], onDelete: Restrict)
-  session       AuthenticationSession   @relation(fields: [authSessionId], references: [id], onDelete: Restrict)
+  id            String                @id @default(uuid()) @db.Uuid
+  userId        String                @db.Uuid
+  authSessionId String                @db.Uuid
+  operation     String                @db.VarChar(100)
+  key           String                @db.Uuid
+  payloadHash   String                @db.VarChar(128)
+  resourceId    String?               @db.Uuid
+  createdAt     DateTime              @default(now()) @db.Timestamptz(6)
+  user          User                  @relation(fields: [userId], references: [id], onDelete: Restrict)
+  session       AuthenticationSession @relation(fields: [authSessionId], references: [id], onDelete: Restrict)
+
   @@unique([userId, operation, key])
 }
