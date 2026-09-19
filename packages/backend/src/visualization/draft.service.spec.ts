@@ -1,0 +1,1 @@
+import { describe,it,expect } from "vitest"; import { DraftService } from "./draft.service.js"; describe("draft",()=>it("uses virtual revision zero then increments",async()=>{const s=new DraftService();expect((await s.get("u")).revision).toBe(0);expect((await s.save("u",{floorSelected:true,wallSelected:false},0)).revision).toBe(1)}));

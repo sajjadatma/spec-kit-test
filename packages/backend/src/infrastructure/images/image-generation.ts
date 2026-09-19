@@ -1,0 +1,1 @@
+export type GenerationInput={room:Buffer;references:{surface:"FLOOR"|"WALL";image:Buffer}[];deadline:Date}; export type GenerationOutput={image:Buffer;mediaType:"image/png"}; export interface ImageGenerationService{generate(input:GenerationInput):Promise<GenerationOutput>}

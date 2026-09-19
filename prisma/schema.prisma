@@ -92,6 +92,18 @@ enum AssetStatus {
   DELETING
   DELETED
 }
+enum AttemptStatus {
+  PREPARING
+  GENERATING
+  COMPLETED
+  FAILED
+}
+enum JobStatus {
+  QUEUED
+  RUNNING
+  SUCCEEDED
+  FAILED
+}
 
 model User {
   id              String                  @id @default(uuid()) @db.Uuid
@@ -115,6 +127,9 @@ model User {
   updatedProducts Product[] @relation("ProductUpdatedBy")
   exchangeRates   ExchangeRate[]
   assets          FileAsset[]
+  visualizationSessions VisualizationSession[]
+  generationAttempts GenerationAttempt[]
+  roomDraft RoomDraft?
   @@index([role, approval, disabledAt])
 }
 
@@ -156,6 +171,7 @@ model Product {
   createdBy User @relation("ProductCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
   updatedBy User @relation("ProductUpdatedBy", fields: [updatedById], references: [id], onDelete: Restrict)
   images ProductImage[]
+  attemptSurfaces AttemptSurface[]
   @@index([active, archivedAt, category])
   @@index([name, sku])
 }
@@ -175,6 +191,9 @@ model FileAsset {
  rejectedCode String? @db.VarChar(80)
  creator User @relation(fields:[creatorId],references:[id])
  images ProductImage[]
+ roomDraftImage RoomDraft? @relation("RoomDraftImage")
+ attemptSurfaces AttemptSurface[]
+ attemptRoomAssets GenerationAttempt[] @relation("AttemptRoomAsset")
 }
 model ProductImage {
  id String @id @default(uuid()) @db.Uuid
@@ -187,6 +206,64 @@ model ProductImage {
  asset FileAsset @relation(fields:[assetId],references:[id],onDelete:Restrict)
  @@unique([productId,contentHash])
  @@unique([productId,position])
+}
+
+model VisualizationSession {
+ id String @id @default(uuid()) @db.Uuid
+ ownerId String @db.Uuid
+ createdAt DateTime @default(now()) @db.Timestamptz(6)
+ deletedAt DateTime? @db.Timestamptz(6)
+ owner User @relation(fields:[ownerId],references:[id])
+ attempts GenerationAttempt[]
+}
+model RoomDraft {
+ id String @id @default(uuid()) @db.Uuid
+ ownerId String @unique @db.Uuid
+ floorSelected Boolean @default(false)
+ wallSelected Boolean @default(false)
+ floorProductId String? @db.Uuid
+ wallProductId String? @db.Uuid
+ roomAssetId String? @unique @db.Uuid
+ revision Int @default(0)
+ expiresAt DateTime @db.Timestamptz(6)
+ owner User @relation(fields:[ownerId],references:[id],onDelete:Cascade)
+ roomAsset FileAsset? @relation("RoomDraftImage",fields:[roomAssetId],references:[id],onDelete:Restrict)
+ @@index([expiresAt])
+}
+model GenerationAttempt {
+ id String @id @default(uuid()) @db.Uuid
+ ownerId String @db.Uuid
+ sessionId String @db.Uuid
+ status AttemptStatus @default(PREPARING)
+ acceptedAt DateTime @default(now()) @db.Timestamptz(6)
+ deadlineAt DateTime @db.Timestamptz(6)
+ finishedAt DateTime? @db.Timestamptz(6)
+ safeErrorCode String? @db.VarChar(80)
+ revision Int @default(0)
+ dispatchFence Int @default(0)
+ consentVersion String @db.VarChar(64)
+ consentAcceptedAt DateTime @db.Timestamptz(6)
+ resultStorageKey String? @db.VarChar(512)
+ resultMediaType String? @db.VarChar(50)
+ roomAssetId String @db.Uuid
+ job BackgroundJob?
+ surfaces AttemptSurface[]
+ roomAsset FileAsset @relation("AttemptRoomAsset",fields:[roomAssetId],references:[id],onDelete:Restrict)
+ owner User @relation(fields:[ownerId],references:[id])
+ session VisualizationSession @relation(fields:[sessionId],references:[id])
+ @@index([ownerId,status])
+}
+model AttemptSurface {
+ id String @id @default(uuid()) @db.Uuid
+ attemptId String @db.Uuid
+ surface String @db.VarChar(8)
+ productId String @db.Uuid
+ assetId String @db.Uuid
+ createdAt DateTime @default(now()) @db.Timestamptz(6)
+ attempt GenerationAttempt @relation(fields:[attemptId],references:[id],onDelete:Cascade)
+ product Product @relation(fields:[productId],references:[id],onDelete:Restrict)
+ asset FileAsset @relation(fields:[assetId],references:[id],onDelete:Restrict)
+ @@unique([attemptId,surface])
 }
 
 model ExchangeRate {
@@ -205,6 +282,21 @@ model PricingSettings {
   currentRateId String? @unique @db.Uuid
   revision Int @default(0)
   currentRate ExchangeRate? @relation("CurrentPricingRate", fields: [currentRateId], references: [id], onDelete: Restrict)
+}
+model BackgroundJob {
+ id String @id @default(uuid()) @db.Uuid
+ kind String @db.VarChar(32)
+ status JobStatus @default(QUEUED)
+ attemptId String? @unique @db.Uuid
+ fencingToken Int @default(0)
+ leaseUntil DateTime? @db.Timestamptz(6)
+ workerId String? @db.VarChar(100)
+ attempts Int @default(0)
+ safeErrorCode String? @db.VarChar(80)
+ createdAt DateTime @default(now()) @db.Timestamptz(6)
+ updatedAt DateTime @updatedAt @db.Timestamptz(6)
+ attempt GenerationAttempt? @relation(fields:[attemptId],references:[id],onDelete:Cascade)
+ @@index([kind,status,leaseUntil])
 }
 
 model GovernanceLock {

@@ -1,0 +1,1 @@
+ALTER TABLE "RoomDraft" ADD COLUMN "roomAssetId" uuid UNIQUE REFERENCES "FileAsset"("id") ON DELETE RESTRICT;

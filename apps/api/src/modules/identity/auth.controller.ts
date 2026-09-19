@@ -5,8 +5,8 @@ import { LoginDto, RegisterDto, ResetPasswordDto, ResetRequestDto } from "./auth
 import { IdentityService } from "./identity.service.js";
 type CookieResponse = { cookie(name: string, value: string, options: Record<string, unknown>): void; clearCookie(name: string, options: Record<string, unknown>): void; };
 const readCookie = (header: string | undefined, name: string) => header?.split(";").map((part) => part.trim()).find((part) => part.startsWith(`${name}=`))?.slice(name.length + 1);
-const cookieOptions = { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax" as const, path: "/api/v1/auth" };
-const accessCookieOptions = { ...cookieOptions, path: "/api/v1" };
+const cookieOptions = { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax" as const, path: "/" };
+const accessCookieOptions = cookieOptions;
 const requestIp = (request: { ip?: string; headers: Record<string, string | undefined> }) => request.headers["x-forwarded-for"]?.split(",")[0]?.trim() ?? request.ip ?? "unknown";
 @Controller("auth")
 export class AuthController {

@@ -6,6 +6,9 @@ import { ProductsController } from "../catalog/products.controller.js";
 import { PricingController } from "../pricing/pricing.controller.js";
 import { UploadsController } from "../media/uploads.controller.js";
 import { ProductImagesController } from "../media/product-images.controller.js";
+import { DraftsController } from "../visualization/drafts.controller.js";
+import { AttemptsController } from "../visualization/attempts.controller.js";
+import { VisualizationPolicyController } from "../visualization/policy.controller.js";
 import { IdentityService } from "./identity.service.js";
-@Module({ controllers: [AuthController, PreferencesController, UsersController, ProductsController, PricingController, UploadsController, ProductImagesController], providers: [IdentityService] })
+@Module({ controllers: [AuthController, PreferencesController, UsersController, ProductsController, PricingController, UploadsController, ProductImagesController, DraftsController, AttemptsController, VisualizationPolicyController], providers: [IdentityService] })
 export class IdentityModule {}

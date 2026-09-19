@@ -12,7 +12,11 @@ import {
   UploadService,
   GalleryService,
   ProductQueryService,
+  DraftService,
+  AttemptService,
   createPrismaClient,
+  LocalStorageAdapter,
+  StorageService,
   normalizeEmail,
   ResetMailCipher,
 } from "@industrial-dashboard/backend";
@@ -33,6 +37,9 @@ export class IdentityService implements OnModuleDestroy {
   private readonly uploads = new UploadService(this.prisma);
   private readonly gallery = new GalleryService(this.prisma);
   private readonly productQuery = new ProductQueryService(this.prisma);
+  private readonly storage = new StorageService(new LocalStorageAdapter(process.env.STORAGE_ROOT ?? "storage"));
+  private readonly drafts = new DraftService(this.prisma);
+  private readonly attempts = new AttemptService(this.prisma);
 
   register(displayName: string, email: string, password: string, locale: "fa" | "en") {
     return this.registration.register(displayName, email, password, locale);
@@ -95,8 +102,21 @@ export class IdentityService implements OnModuleDestroy {
   fixedRoles(actor: { id: string; role: "SUPER_ADMIN" | "ADMIN" | "PRODUCT_MANAGER" | "USER" }) { return this.users.fixedRoles(actor); }
   productsList(actor: never) { return this.products.list(actor); } productGet(actor: never, id: string) { return this.products.get(actor, id); } productCreate(actor: never, body: object) { return this.products.create(actor, body as Record<string, unknown>); } productUpdate(actor: never, id: string, body: object, revision?: number) { return this.products.update(actor, id, body as Record<string, unknown>, revision); } productArchive(actor: never, id: string, revision?: number) { return this.products.archive(actor, id, revision); } productRestore(actor: never, id: string, revision?: number) { return this.products.restore(actor, id, revision); } productRemove(actor: never, id: string, revision?: number) { return this.products.remove(actor, id, revision); }
   currentRate(){return this.pricing.current();} setRate(actor:{id:string;role:string},rate:string,revision:number){return this.pricing.set(actor.id,actor.role,rate,revision);}
-  upload(id:string,bytes:Buffer,type:string,width:number,height:number){return this.uploads.register(id,bytes,type,width,height)} attachImage(productId:string,assetId:string,actorId:string){return this.gallery.attach(productId,assetId,actorId)} primaryImage(productId:string,imageId:string,actorId:string){return this.gallery.setPrimary(productId,imageId,actorId)} removeImage(productId:string,imageId:string,actorId:string){return this.gallery.remove(productId,imageId,actorId)}
+  async upload(id:string,bytes:Buffer,type:string,width:number,height:number){const asset=await this.uploads.register(id,bytes,type,width,height);await this.storage.put(asset.storageKey,bytes);return asset} attachImage(productId:string,assetId:string,actorId:string){return this.gallery.attach(productId,assetId,actorId)} primaryImage(productId:string,imageId:string,actorId:string){return this.gallery.setPrimary(productId,imageId,actorId)} removeImage(productId:string,imageId:string,actorId:string){return this.gallery.remove(productId,imageId,actorId)}
   searchProducts(actor:never,query:object){return this.productQuery.search(actor,query as never)}
+  getDraft(id:string){return this.drafts.get(id)} saveDraft(id:string,input:object,revision:number){return this.drafts.save(id,input as never,revision)} discardDraft(id:string){return this.drafts.discard(id)}
+  async attachRoomAsset(ownerId:string,assetId:string,revision:number){const asset=await this.prisma.fileAsset.findFirst({where:{id:assetId,creatorId:ownerId,status:"READY"}});if(!asset)throw new Error("RECORD_NOT_FOUND");const draft=await this.drafts.get(ownerId);return this.drafts.save(ownerId,{floorSelected:draft.floorSelected,wallSelected:draft.wallSelected,floorProductId:draft.floorProductId,wallProductId:draft.wallProductId,roomAssetId:assetId},revision)}
+  async submitAttempt(id:string,consentVersion?:string){return this.attempts.submit(id,await this.drafts.get(id),consentVersion)} getAttempt(ownerId:string,id:string){return this.attempts.get(ownerId,id)}
+  async submitAttemptIdempotent(ownerId:string, sessionId:string, key:string, consentVersion:string){
+    const existing=await this.prisma.idempotencyReceipt.findUnique({where:{userId_operation_key:{userId:ownerId,operation:"visualization.submit",key}}});
+    if(existing?.resourceId)return this.getAttempt(ownerId,existing.resourceId);
+    const attempt=await this.submitAttempt(ownerId,consentVersion);
+    try { await this.prisma.idempotencyReceipt.create({data:{userId:ownerId,authSessionId:sessionId,operation:"visualization.submit",key,payloadHash:consentVersion,resourceId:attempt.id}}); }
+    catch { const receipt=await this.prisma.idempotencyReceipt.findUniqueOrThrow({where:{userId_operation_key:{userId:ownerId,operation:"visualization.submit",key}}}); if(receipt.resourceId)return this.getAttempt(ownerId,receipt.resourceId); throw new Error("IDEMPOTENCY_CONFLICT"); }
+    return attempt;
+  }
+  async retryAttempt(ownerId:string,attemptId:string,consentVersion?:string){await this.attempts.get(ownerId,attemptId);return this.attempts.submit(ownerId,await this.drafts.get(ownerId),consentVersion)}
+  async visualizationResult(ownerId:string,attemptId:string){const attempt=await this.prisma.generationAttempt.findFirst({where:{id:attemptId,ownerId}});if(!attempt||attempt.status!=="COMPLETED"||!attempt.resultStorageKey)throw new Error("RECORD_NOT_FOUND");return{body:await this.storage.get(attempt.resultStorageKey),mediaType:attempt.resultMediaType??"image/png"}}
 
   onModuleDestroy() {
     return this.prisma.$disconnect();

@@ -1,0 +1,1 @@
+import type { GenerationInput,GenerationOutput,ImageGenerationService } from "./image-generation.js"; export class FakeImageGenerationAdapter implements ImageGenerationService{async generate(input:GenerationInput):Promise<GenerationOutput>{if(input.deadline<=new Date())throw new Error("GENERATION_TIMEOUT");return{image:input.room,mediaType:"image/png"}}}

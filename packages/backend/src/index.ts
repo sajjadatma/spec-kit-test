@@ -21,7 +21,22 @@ export { PricingService } from "./pricing/pricing.service.js";
 export { GalleryService } from "./catalog/gallery.service.js";
 export { UploadService } from "./media/upload.service.js";
 export { ProductQueryService } from "./catalog/product-query.service.js";
+export { DraftService } from "./visualization/draft.service.js";
+export { FakeImageGenerationAdapter } from "./infrastructure/images/fake.adapter.js";
+export type { ImageGenerationService, GenerationInput, GenerationOutput } from "./infrastructure/images/image-generation.js";
+export { AttemptService } from "./visualization/attempt.service.js";
+export { PrismaJobPort } from "./infrastructure/jobs/prisma-job.port.js";
+export { JobRunner } from "./infrastructure/jobs/job-runner.js";
+export type { JobPort, JobKind, LeasedJob } from "./infrastructure/jobs/job-runner.js";
 export { LocalStorageAdapter } from "./infrastructure/storage/local.adapter.js";
 export { StorageService } from "./infrastructure/storage/storage.service.js";
 export { ResetEmailOutboxService } from "./infrastructure/mail/outbox.service.js";
 export type { ClaimedResetEmail, ResetEmailOutboxStore } from "./infrastructure/mail/outbox.service.js";
+
+export { OpenAiImageGenerationAdapter } from "./infrastructure/images/openai.adapter.js";
+export { roomSurfacesPrompt, ROOM_SURFACES_PROMPT_VERSION } from "./infrastructure/images/prompts/room-surfaces-v1.js";
+
+export { PersistentDeadlineService } from "./visualization/deadline.service.js";
+export { GenerationRecoveryService } from "./visualization/recovery.service.js";
+
+export { VariationService } from "./visualization/variation.service.js";

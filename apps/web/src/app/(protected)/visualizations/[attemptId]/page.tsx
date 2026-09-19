@@ -1,0 +1,1 @@
+import { AttemptProgress } from "../../../../features/visualization/attempt-progress"; export default async function Attempt({params}:{params:Promise<{attemptId:string}>}){const{attemptId}=await params;return <main><h1>Visualization attempt</h1><AttemptProgress id={attemptId}/></main>}
