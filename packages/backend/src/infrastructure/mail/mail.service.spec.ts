@@ -1,0 +1,4 @@
+import { describe, expect, it } from "vitest";
+import { MailService, ResetMailCipher } from "./mail.service.js";
+describe("MailService", () => { it("passes the locale-specific reset link to the transport", async () => { let delivered = false; const service = new MailService({ sendReset: async (message) => { delivered = message.locale === "fa" && message.resetUrl.startsWith("https://"); } }); await service.sendReset({ recipient: "user@example.com", resetUrl: "https://app.example/reset", locale: "fa" }); expect(delivered).toBe(true); }); });
+describe("ResetMailCipher", () => { it("does not persist a readable reset URL", () => { const cipher = new ResetMailCipher("12345678901234567890123456789012"); const encrypted = cipher.encrypt({ recipient: "user@example.com", resetUrl: "https://app.example/reset?token=secret", locale: "en" }); expect(encrypted).not.toContain("secret"); expect(cipher.decrypt(encrypted).locale).toBe("en"); }); });

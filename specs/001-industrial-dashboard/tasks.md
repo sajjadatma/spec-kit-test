@@ -135,15 +135,15 @@ fixtures supply external dependencies for independent story verification, not pr
 
 ### Tests for User Story 1
 
-- [ ] T019 [P] [US1] Write auth/CSRF/current-user/preferences/reset route and DTO contract tests in `tests/contracts/auth.spec.ts`, including public-route allowlisting, generic acknowledgements and safe status codes.
+- [X] T019 [P] [US1] Write auth/CSRF/current-user/preferences/reset route and DTO contract tests in `tests/contracts/auth.spec.ts`, including public-route allowlisting, generic acknowledgements and safe status codes.
 
-- [ ] T020 [P] [US1] Write registration/session/refresh/reset integration and concurrency tests in `tests/integration/auth.spec.ts` and `tests/concurrency/auth.spec.ts`; include duplicate normalized email, consumed token replay, superseded links and unchanged account approval.
+- [X] T020 [P] [US1] Write registration/session/refresh/reset integration and concurrency tests in `tests/integration/auth.spec.ts` and `tests/concurrency/auth.spec.ts`; include duplicate normalized email, consumed token replay, superseded links and unchanged account approval.
 
-- [ ] T021 [P] [US1] Write bilingual sign-in/registration/logout/reset and expiry browser scenarios in `tests/e2e/auth.spec.ts`, with Mailpit/fake-time fixtures and no token leakage or automatic post-reset sign-in.
+- [X] T021 [P] [US1] Write bilingual sign-in/registration/logout/reset and expiry browser scenarios in `tests/e2e/auth.spec.ts`, with Mailpit/fake-time fixtures and no token leakage or automatic post-reset sign-in.
 
 ### Implementation for User Story 1
 
-- [ ] T022 [US1] Add AuthenticationSession, RefreshToken, PasswordReset and EmailOutbox in `prisma/schema.prisma` and `prisma/migrations/002_auth_sessions/migration.sql`; preserve all quoted nullable/unique/state/expiry constraints.
+- [X] T022 [US1] Add AuthenticationSession, RefreshToken, PasswordReset and EmailOutbox in `prisma/schema.prisma` and `prisma/migrations/002_auth_sessions/migration.sql`; preserve all quoted nullable/unique/state/expiry constraints.
 
   Binding quotation (part of this task):
 
@@ -167,7 +167,7 @@ fixtures supply external dependencies for independent story verification, not pr
   > following uncertain acknowledgement, but delivered links remain single-use. No email/token bodies
   > in logs. Generic recovery acknowledgement is independent of whether a row was created.
 
-- [ ] T023 [US1] Add rate-limit buckets and idempotency receipts in `prisma/schema.prisma` and `prisma/migrations/003_request_controls/migration.sql`; bind receipts to AuthenticationSession and retain their deletion-safe semantics.
+- [X] T023 [US1] Add rate-limit buckets and idempotency receipts in `prisma/schema.prisma` and `prisma/migrations/003_request_controls/migration.sql`; bind receipts to AuthenticationSession and retain their deletion-safe semantics.
 
   Binding quotation (part of this task):
 
@@ -178,25 +178,25 @@ fixtures supply external dependencies for independent story verification, not pr
   > createdAt. Scope keys by operation/user, verify same payload, retain while original auth session
   > can retry. Deletion receipt yields RESOURCE_DELETED rather than resubmission.
 
-- [ ] T024 [US1] Implement email normalization, 12–128-character passphrases without truncation, Argon2id calibration/minimum parameters, pending USER registration and secure initial SUPER_ADMIN bootstrap in `packages/backend/src/identity/password.service.ts`, `packages/backend/src/identity/registration.service.ts`, and `scripts/bootstrap-admin.ts`; no public bootstrap or hardcoded password.
+- [X] T024 [US1] Implement email normalization, 12–128-character passphrases without truncation, Argon2id calibration/minimum parameters, pending USER registration and secure initial SUPER_ADMIN bootstrap in `packages/backend/src/identity/password.service.ts`, `packages/backend/src/identity/registration.service.ts`, and `scripts/bootstrap-admin.ts`; no public bootstrap or hardcoded password.
 
-- [ ] T025 [US1] Implement 15-minute JWT access cookies and seven-day absolute rotating hashed refresh families in `packages/backend/src/identity/session.service.ts`; validate algorithm/signature/issuer/audience/expiry/session, revoke replay families atomically, and serialize competing refreshes.
+- [X] T025 [US1] Implement 15-minute JWT access cookies and seven-day absolute rotating hashed refresh families in `packages/backend/src/identity/session.service.ts`; validate algorithm/signature/issuer/audience/expiry/session, revoke replay families atomically, and serialize competing refreshes.
 
-- [ ] T026 [US1] Implement current-account/session checks, fixed capabilities, CSRF/session/pre-auth binding, trusted Origin and distributed auth limits in `apps/api/src/common/auth.guard.ts`, `apps/api/src/common/csrf.guard.ts`, and `packages/backend/src/identity/rate-limit.service.ts`; every protected operation uses current authority; include all REST limit thresholds.
+- [X] T026 [US1] Implement current-account/session checks, fixed capabilities, CSRF/session/pre-auth binding, trusted Origin and distributed auth limits in `apps/api/src/common/auth.guard.ts`, `apps/api/src/common/csrf.guard.ts`, and `packages/backend/src/identity/rate-limit.service.ts`; every protected operation uses current authority; include all REST limit thresholds.
 
-- [ ] T027 [US1] Implement hashed single-use reset issuance/consumption in `packages/backend/src/identity/password-reset.service.ts`; 30-minute expiry, supersede older links, atomic password/authVersion/session changes, trusted reset origin and non-disclosing request feedback.
+- [X] T027 [US1] Implement hashed single-use reset issuance/consumption in `packages/backend/src/identity/password-reset.service.ts`; 30-minute expiry, supersede older links, atomic password/authVersion/session changes, trusted reset origin and non-disclosing request feedback.
 
-- [ ] T028 [US1] Implement encrypted reset-email outbox and TLS SMTP/Mailpit adapter in `packages/backend/src/infrastructure/mail/mail.service.ts`, `packages/backend/src/infrastructure/mail/smtp.adapter.ts`, and `apps/worker/src/handlers/email.handler.ts`; check supersession/expiry before send, retry same link at most twice, delete ciphertext after send/expiry and use en/fa templates.
+- [X] T028 [US1] Implement encrypted reset-email outbox and TLS SMTP/Mailpit adapter in `packages/backend/src/infrastructure/mail/mail.service.ts`, `packages/backend/src/infrastructure/mail/smtp.adapter.ts`, and `apps/worker/src/handlers/email.handler.ts`; check supersession/expiry before send, retry same link at most twice, delete ciphertext after send/expiry and use en/fa templates.
 
-- [ ] T029 [US1] Implement all auth and self-preference DTO/controllers in `apps/api/src/modules/identity/auth.controller.ts`, `apps/api/src/modules/identity/auth.dto.ts`, and `apps/api/src/modules/identity/preferences.controller.ts`; expose no verifier/hash fields and return pending/rejected/disabled status only after valid credentials.
+- [X] T029 [US1] Implement all auth and self-preference DTO/controllers in `apps/api/src/modules/identity/auth.controller.ts`, `apps/api/src/modules/identity/auth.dto.ts`, and `apps/api/src/modules/identity/preferences.controller.ts`; expose no verifier/hash fields and return pending/rejected/disabled status only after valid credentials.
 
-- [ ] T030 [US1] Integrate cross-tab single-flight refresh, CSRF acquisition, safe retry keys and private-cache clearing in `apps/web/src/lib/api/auth-session.ts`; SSR never rotates tokens, replay/ambiguous refresh requires sign-in, and another account never receives the previous account’s drafts.
+- [X] T030 [US1] Integrate cross-tab single-flight refresh, CSRF acquisition, safe retry keys and private-cache clearing in `apps/web/src/lib/api/auth-session.ts`; SSR never rotates tokens, replay/ambiguous refresh requires sign-in, and another account never receives the previous account’s drafts.
 
-- [ ] T031 [US1] Build login/register/forgot/reset pages in `apps/web/src/app/login/page.tsx`, `apps/web/src/app/register/page.tsx`, `apps/web/src/app/forgot-password/page.tsx`, `apps/web/src/app/reset-password/page.tsx`, and reusable fields in `apps/web/src/features/auth/auth-forms.tsx`; provide both languages and all validation/loading/success/error states.
+- [X] T031 [US1] Build login/register/forgot/reset pages in `apps/web/src/app/login/page.tsx`, `apps/web/src/app/register/page.tsx`, `apps/web/src/app/forgot-password/page.tsx`, `apps/web/src/app/reset-password/page.tsx`, and reusable fields in `apps/web/src/features/auth/auth-forms.tsx`; provide both languages and all validation/loading/success/error states.
 
-- [ ] T032 [US1] Add authenticated layout and minimal post-login landing shell in `apps/web/src/app/(protected)/layout.tsx` and `apps/web/src/app/(protected)/dashboard/page.tsx`; the complete dashboard belongs to US8; preserve same-account nonsecret form state on expiry and clear secrets/private UI on logout.
+- [X] T032 [US1] Add authenticated layout and minimal post-login landing shell in `apps/web/src/app/(protected)/layout.tsx` and `apps/web/src/app/(protected)/dashboard/page.tsx`; the complete dashboard belongs to US8; preserve same-account nonsecret form state on expiry and clear secrets/private UI on logout.
 
-- [ ] T033 [US1] Run US1 contract/integration/browser tests plus typecheck/lint/build and record actual results in `specs/001-industrial-dashboard/validation/us1.md`; prove immediate revocation and both-language recovery before closing US1.
+- [X] T033 [US1] Run US1 contract/integration/browser tests plus typecheck/lint/build and record actual results in `specs/001-industrial-dashboard/validation/us1.md`; prove immediate revocation and both-language recovery before closing US1.
 
 **Checkpoint**: Story works against its prerequisite fixtures; record passing checks before declaring it complete.
 

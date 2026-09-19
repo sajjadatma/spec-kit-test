@@ -150,7 +150,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    - **Execution flow**: Order and dependency requirements
 
 6. Execute implementation following the task plan:
-   - **Phase-by-phase execution**: Complete each phase before moving to the next
+   - **Phase-by-phase execution**: Complete each phase before moving to the next. A validation checkpoint verifies the phase; it does not end execution. After validation, automatically start the next ready task or phase.
    - **Respect dependencies**: Run sequential tasks in order, parallel tasks [P] can run together
    - **Follow TDD approach**: Execute test tasks before their corresponding implementation tasks
    - **File-based coordination**: Tasks affecting the same files must run sequentially
@@ -165,10 +165,10 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 8. Progress tracking and error handling:
    - Report progress after each completed task
-   - Halt execution if any non-parallel task fails
-   - For parallel tasks [P], continue with successful tasks, report failed ones
+   - On a non-parallel task failure, diagnose and fix it immediately. Continue with independently ready tasks where this is safe.
+   - For parallel tasks [P], continue with successful tasks and repair failed tasks before closing their phase.
    - Provide clear error messages with context for debugging
-   - Suggest next steps if implementation cannot proceed
+   - Stop only when progress requires unavailable credentials, external infrastructure, or a decision that cannot be inferred from the specification; explain the concrete blocker and continue independent work where possible.
    - **IMPORTANT** For completed tasks, make sure to mark the task off as [X] in the tasks file.
 
 9. Completion validation:

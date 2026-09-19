@@ -10,7 +10,7 @@
     "infra:stop": "tsx scripts/infra.ts stop",
     "db:migrate": "prisma migrate dev",
     "db:seed:dev": "tsx prisma/seed.ts",
-    "admin:bootstrap": "tsx scripts/admin-bootstrap.ts",
+    "admin:bootstrap": "tsx scripts/bootstrap-admin.ts",
     "typecheck": "pnpm -r typecheck",
     "lint": "eslint .",
     "format:check": "prettier --check .",

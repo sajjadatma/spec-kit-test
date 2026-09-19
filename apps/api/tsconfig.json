@@ -1,1 +1,1 @@
-{ "extends": "../../tsconfig.base.json", "compilerOptions": { "outDir": "dist", "experimentalDecorators": true, "emitDecoratorMetadata": true }, "include": ["src/**/*.ts"] }
+{ "extends": "../../tsconfig.base.json", "compilerOptions": { "outDir": "dist", "experimentalDecorators": true, "emitDecoratorMetadata": true, "baseUrl": "../..", "paths": { "@industrial-dashboard/backend": ["packages/backend/src/index.ts"] } }, "include": ["src/**/*.ts"] }

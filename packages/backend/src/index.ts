@@ -1,3 +1,17 @@
 export const APPLICATION_NAME = "industrial-dashboard";
-export { MailService } from "./infrastructure/mail/mail.service.js";
+export { MailService, ResetMailCipher } from "./infrastructure/mail/mail.service.js";
 export type { ResetMail } from "./infrastructure/mail/mail.service.js";
+export { LocalMailAdapter, SmtpMailAdapter } from "./infrastructure/mail/smtp.adapter.js";
+export { AuthenticationService } from "./identity/authentication.service.js";
+export type { AccountAccess, AccountForAuthentication, AuthenticationStore } from "./identity/authentication.service.js";
+export { RegistrationService } from "./identity/registration.service.js";
+export type { RegisteredUser, RegistrationStore } from "./identity/registration.service.js";
+export { PrismaIdentityStore } from "./identity/prisma-identity.store.js";
+export { SessionService } from "./identity/session.service.js";
+export { PasswordResetService } from "./identity/password-reset.service.js";
+export { createPrismaClient } from "./infrastructure/prisma/prisma.service.js";
+export { normalizeEmail } from "./identity/password.service.js";
+export { RateLimitService } from "./identity/rate-limit.service.js";
+export type { RateLimitScope, RateLimitStore } from "./identity/rate-limit.service.js";
+export { ResetEmailOutboxService } from "./infrastructure/mail/outbox.service.js";
+export type { ClaimedResetEmail, ResetEmailOutboxStore } from "./infrastructure/mail/outbox.service.js";
