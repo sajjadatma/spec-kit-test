@@ -13,5 +13,7 @@ export { createPrismaClient } from "./infrastructure/prisma/prisma.service.js";
 export { normalizeEmail } from "./identity/password.service.js";
 export { RateLimitService } from "./identity/rate-limit.service.js";
 export type { RateLimitScope, RateLimitStore } from "./identity/rate-limit.service.js";
+export { UserManagementService } from "./identity/user-management.service.js";
+export type { Actor, FixedRole, UserSummary } from "./identity/user-management.service.js";
 export { ResetEmailOutboxService } from "./infrastructure/mail/outbox.service.js";
 export type { ClaimedResetEmail, ResetEmailOutboxStore } from "./infrastructure/mail/outbox.service.js";

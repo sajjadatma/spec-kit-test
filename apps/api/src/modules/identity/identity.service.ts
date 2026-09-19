@@ -6,6 +6,7 @@ import {
   RegistrationService,
   RateLimitService,
   SessionService,
+  UserManagementService,
   createPrismaClient,
   normalizeEmail,
   ResetMailCipher,
@@ -21,6 +22,7 @@ export class IdentityService implements OnModuleDestroy {
   private readonly resets = new PasswordResetService(this.store);
   private readonly limits = new RateLimitService(this.store, process.env.TOKEN_HASH_SECRET ?? "");
   private readonly resetCipher = new ResetMailCipher();
+  private readonly users = new UserManagementService(this.prisma);
 
   register(displayName: string, email: string, password: string, locale: "fa" | "en") {
     return this.registration.register(displayName, email, password, locale);
@@ -74,6 +76,13 @@ export class IdentityService implements OnModuleDestroy {
   rateLimit(scope: "loginIp" | "loginAccount" | "registerIp" | "resetAccount" | "resetIp" | "resetConsumeIp" | "refreshSession", subject: string) {
     return this.limits.check(scope, subject);
   }
+
+  listUsers(actor: { id: string; role: "SUPER_ADMIN" | "ADMIN" | "PRODUCT_MANAGER" | "USER" }, query: Parameters<UserManagementService["list"]>[1]) { return this.users.list(actor, query); }
+  getUser(actor: { id: string; role: "SUPER_ADMIN" | "ADMIN" | "PRODUCT_MANAGER" | "USER" }, id: string) { return this.users.get(actor, id); }
+  setApproval(actor: { id: string; role: "SUPER_ADMIN" | "ADMIN" | "PRODUCT_MANAGER" | "USER" }, id: string, decision: "APPROVED" | "REJECTED", revision?: number) { return this.users.setApproval(actor, id, decision, revision); }
+  setAccess(actor: { id: string; role: "SUPER_ADMIN" | "ADMIN" | "PRODUCT_MANAGER" | "USER" }, id: string, disabled: boolean, revision?: number) { return this.users.setAccess(actor, id, disabled, revision); }
+  setRole(actor: { id: string; role: "SUPER_ADMIN" | "ADMIN" | "PRODUCT_MANAGER" | "USER" }, id: string, role: "SUPER_ADMIN" | "ADMIN" | "PRODUCT_MANAGER" | "USER", revision?: number) { return this.users.setRole(actor, id, role, revision); }
+  fixedRoles(actor: { id: string; role: "SUPER_ADMIN" | "ADMIN" | "PRODUCT_MANAGER" | "USER" }) { return this.users.fixedRoles(actor); }
 
   onModuleDestroy() {
     return this.prisma.$disconnect();

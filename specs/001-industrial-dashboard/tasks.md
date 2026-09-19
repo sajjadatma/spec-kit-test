@@ -210,21 +210,21 @@ fixtures supply external dependencies for independent story verification, not pr
 
 ### Tests for User Story 2
 
-- [ ] T034 [P] [US2] Write user-list/detail/approval/access/role/fixed-role route policy tests in `tests/contracts/users.spec.ts`, including scoped counts and inaccessible-record404.
+- [X] T034 [P] [US2] Write user-list/detail/approval/access/role/fixed-role route policy tests in `tests/contracts/users.spec.ts`, including scoped counts and inaccessible-record404.
 
-- [ ] T035 [P] [US2] Write account-management and last-enabled-SA races in `tests/integration/users.spec.ts` and `tests/concurrency/users.spec.ts`; verify role/status changes affect existing sessions immediately.
+- [X] T035 [P] [US2] Write account-management and last-enabled-SA races in `tests/integration/users.spec.ts` and `tests/concurrency/users.spec.ts`; verify role/status changes affect existing sessions immediately.
 
-- [ ] T036 [P] [US2] Write bilingual administrative journey and confirmation tests in `tests/e2e/users.spec.ts`; ADMIN searches must not reveal higher-role accounts and no role-definition editor may exist.
+- [X] T036 [P] [US2] Write bilingual administrative journey and confirmation tests in `tests/e2e/users.spec.ts`; ADMIN searches must not reveal higher-role accounts and no role-definition editor may exist.
 
 ### Implementation for User Story 2
 
-- [ ] T037 [US2] Implement scoped user search, approval/rejection, disable/enable and SA-only roles in `packages/backend/src/identity/user-management.service.ts`; use User/GovernanceLock constraints from foundation, If-Match, audit and a consistent singleton/user lock order.
+- [X] T037 [US2] Implement scoped user search, approval/rejection, disable/enable and SA-only roles in `packages/backend/src/identity/user-management.service.ts`; use User/GovernanceLock constraints from foundation, If-Match, audit and a consistent singleton/user lock order.
 
-- [ ] T038 [US2] Expose GET users/detail/roles, POST approval and PATCH access/role in `apps/api/src/modules/identity/users.controller.ts` and `apps/api/src/modules/identity/users.dto.ts`; validate target-role boundaries before any disclosure and forbid role-definition mutation.
+- [X] T038 [US2] Expose GET users/detail/roles, POST approval and PATCH access/role in `apps/api/src/modules/identity/users.controller.ts` and `apps/api/src/modules/identity/users.dto.ts`; validate target-role boundaries before any disclosure and forbid role-definition mutation.
 
-- [ ] T039 [US2] Build account list/detail and fixed-role inspection in `apps/web/src/app/(protected)/users/page.tsx`, `apps/web/src/app/(protected)/users/[id]/page.tsx`, and `apps/web/src/features/users/user-management.tsx`; provide search/paging, confirmations, conflict feedback, translated statuses and no password display.
+- [X] T039 [US2] Build account list/detail and fixed-role inspection in `apps/web/src/app/(protected)/users/page.tsx`, `apps/web/src/app/(protected)/users/[id]/page.tsx`, and `apps/web/src/features/users/user-management.tsx`; provide search/paging, confirmations, conflict feedback, translated statuses and no password display.
 
-- [ ] T040 [US2] Run US2 route/race/browser suites and record evidence in `specs/001-industrial-dashboard/validation/us2.md`; prove pending approval and preservation of at least one enabled SA.
+- [X] T040 [US2] Run US2 route/race/browser suites and record evidence in `specs/001-industrial-dashboard/validation/us2.md`; prove pending approval and preservation of at least one enabled SA.
 
 **Checkpoint**: Story works against its prerequisite fixtures; record passing checks before declaring it complete.
 

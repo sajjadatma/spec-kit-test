@@ -1,0 +1,1 @@
+export default async function UserDetailPage({ params }: { params: Promise<{ id: string }> }) { const { id } = await params; return <main><h1>User details</h1><p>Account ID: {id}</p><a href="/users">Back to user management</a></main>; }
