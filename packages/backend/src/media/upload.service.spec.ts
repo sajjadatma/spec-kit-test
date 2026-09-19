@@ -1,0 +1,1 @@
+import { describe,it,expect } from "vitest"; import { UploadService } from "./upload.service.js"; describe("uploads",()=>it("rejects oversized and unsupported input",async()=>{const service=new UploadService({} as never);await expect(service.register("u",Buffer.alloc(1),"text/plain",256,256)).rejects.toThrow("IMAGE_INVALID");}));

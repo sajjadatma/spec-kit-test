@@ -1,0 +1,1 @@
+import type { LocalStorageAdapter } from "./local.adapter.js"; export class StorageService{constructor(private readonly adapter:LocalStorageAdapter){}put(key:string,body:Buffer){return this.adapter.put(key,body)}get(key:string){return this.adapter.get(key)}}

@@ -1,0 +1,1 @@
+"use client"; export function ProductGallery({images}:{images:{id:string;position:number}[]}){return <ol>{images.map(image=><li key={image.id}>Image {image.position+1}<button type="button">Make primary</button><button type="button">Remove</button></li>)}</ol>}

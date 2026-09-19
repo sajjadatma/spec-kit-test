@@ -350,15 +350,15 @@ fixtures supply external dependencies for independent story verification, not pr
 
 ### Tests for User Story 4
 
-- [ ] T055 [P] [US4] Write image-upload/status/primary/order/delete/content contract tests in `tests/contracts/product-images.spec.ts`, including no public asset-by-ID route and private no-store headers.
+- [X] T055 [P] [US4] Write image-upload/status/primary/order/delete/content contract tests in `tests/contracts/product-images.spec.ts`, including no public asset-by-ID route and private no-store headers.
 
-- [ ] T056 [P] [US4] Write gallery concurrency, malformed/animated/oversized files and cleanup-restart tests in `tests/integration/product-images.spec.ts` and `tests/concurrency/product-images.spec.ts`; assert scoped duplicate detection and archived-product attachment rejection.
+- [X] T056 [P] [US4] Write gallery concurrency, malformed/animated/oversized files and cleanup-restart tests in `tests/integration/product-images.spec.ts` and `tests/concurrency/product-images.spec.ts`; assert scoped duplicate detection and archived-product attachment rejection.
 
-- [ ] T057 [P] [US4] Write bilingual upload progress/per-file retry/primary/reorder/removal tests in `tests/e2e/product-images.spec.ts`, including keyboard move controls and no-image management.
+- [X] T057 [P] [US4] Write bilingual upload progress/per-file retry/primary/reorder/removal tests in `tests/e2e/product-images.spec.ts`, including keyboard move controls and no-image management.
 
 ### Implementation for User Story 4
 
-- [ ] T058 [US4] Add FileAsset, derivatives, ProductImage and product-target UploadReceipt in `prisma/schema.prisma` and `prisma/migrations/006_media/migration.sql`; add primaryImageId FK and defer room-target FK until US6, while preserving all quoted image/reference constraints.
+- [X] T058 [US4] Add FileAsset, derivatives, ProductImage and product-target UploadReceipt in `prisma/schema.prisma` and `prisma/migrations/006_media/migration.sql`; add primaryImageId FK and defer room-target FK until US6, while preserving all quoted image/reference constraints.
 
   Binding quotation (part of this task):
 
@@ -405,7 +405,7 @@ fixtures supply external dependencies for independent story verification, not pr
   > receipts prevent duplicate retry within the authenticated session. A deleted product while upload
   > is pending yields failed receipt and asset cleanup, not a dangling attachment.
 
-- [ ] T059 [US4] Add BackgroundJob persistence and ready-job index in `prisma/schema.prisma` and `prisma/migrations/007_jobs/migration.sql`; connect upload/cleanup targets now and generation/session targets in US6; use typed relations, not an alternate data-access library.
+- [X] T059 [US4] Add BackgroundJob persistence and ready-job index in `prisma/schema.prisma` and `prisma/migrations/007_jobs/migration.sql`; connect upload/cleanup targets now and generation/session targets in US6; use typed relations, not an alternate data-access library.
 
   Binding quotation (part of this task):
 
@@ -418,19 +418,19 @@ fixtures supply external dependencies for independent story verification, not pr
   > requeued by the operator after bounded exhaustion. Stale generation dispatch is reconciled,
   > not blindly repeated. Email uses its specialized outbox lease with the same claim discipline.
 
-- [ ] T060 [US4] Implement private local and S3-compatible adapters in `packages/backend/src/infrastructure/storage/storage.service.ts`, `packages/backend/src/infrastructure/storage/local.adapter.ts`, and `packages/backend/src/infrastructure/storage/s3.adapter.ts`; confine keys, verify private access, and provide no permanent public URL.
+- [X] T060 [US4] Implement private local and S3-compatible adapters in `packages/backend/src/infrastructure/storage/storage.service.ts`, `packages/backend/src/infrastructure/storage/local.adapter.ts`, and `packages/backend/src/infrastructure/storage/s3.adapter.ts`; confine keys, verify private access, and provide no permanent public URL.
 
-- [ ] T061 [US4] Implement bounded quarantine, hashing and upload receipts in `packages/backend/src/media/upload.service.ts`; stream at most10MiB, durable receipt/job enqueue, original preserved on failure, owner/SA-only status, and atomic idempotency.
+- [X] T061 [US4] Implement bounded quarantine, hashing and upload receipts in `packages/backend/src/media/upload.service.ts`; stream at most10MiB, durable receipt/job enqueue, original preserved on failure, owner/SA-only status, and atomic idempotency.
 
-- [ ] T062 [US4] Implement isolated decode/inspection/EXIF-stripped derivatives and fenced job claiming in `apps/worker/src/handlers/image-validation.handler.ts` and `packages/backend/src/infrastructure/jobs/prisma-job.store.ts`; still JPEG/PNG/WebP, ≤25MP, each dimension≥256, exact content validation, lease60s/heartbeat15s/poll1s.
+- [X] T062 [US4] Implement isolated decode/inspection/EXIF-stripped derivatives and fenced job claiming in `apps/worker/src/handlers/image-validation.handler.ts` and `packages/backend/src/infrastructure/jobs/prisma-job.store.ts`; still JPEG/PNG/WebP, ≤25MP, each dimension≥256, exact content validation, lease60s/heartbeat15s/poll1s.
 
-- [ ] T063 [US4] Implement locked gallery attach/order/primary/remove and reference-aware cleanup in `packages/backend/src/catalog/gallery.service.ts`, `packages/backend/src/media/asset-cleanup.service.ts`, and `apps/worker/src/handlers/asset-cleanup.handler.ts`; max10, full permutation, first primary/next replacement, staging expiry24h and DELETING attachment exclusion.
+- [X] T063 [US4] Implement locked gallery attach/order/primary/remove and reference-aware cleanup in `packages/backend/src/catalog/gallery.service.ts`, `packages/backend/src/media/asset-cleanup.service.ts`, and `apps/worker/src/handlers/asset-cleanup.handler.ts`; max10, full permutation, first primary/next replacement, staging expiry24h and DELETING attachment exclusion.
 
-- [ ] T064 [US4] Bind product upload/gallery/receipt/content routes in `apps/api/src/modules/media/product-images.controller.ts`, `apps/api/src/modules/media/uploads.controller.ts`, and `apps/api/src/modules/media/private-content.controller.ts`; apply current context authorization, inspected MIME/nosniff/no-store and no Next image optimizer.
+- [X] T064 [US4] Bind product upload/gallery/receipt/content routes in `apps/api/src/modules/media/product-images.controller.ts`, `apps/api/src/modules/media/uploads.controller.ts`, and `apps/api/src/modules/media/private-content.controller.ts`; apply current context authorization, inspected MIME/nosniff/no-store and no Next image optimizer.
 
-- [ ] T065 [US4] Build per-file upload/gallery/primary/keyboard ordering and confirmation controls in `apps/web/src/features/products/product-gallery.tsx` and `apps/web/src/features/products/image-uploader.tsx`; integrate into product form/details with current revisions and translated limits/errors.
+- [X] T065 [US4] Build per-file upload/gallery/primary/keyboard ordering and confirmation controls in `apps/web/src/features/products/product-gallery.tsx` and `apps/web/src/features/products/image-uploader.tsx`; integrate into product form/details with current revisions and translated limits/errors.
 
-- [ ] T066 [US4] Run US4 suites and storage adapter contract checks, recording evidence in `specs/001-industrial-dashboard/validation/us4.md`; prove no duplicate successes, exactly one primary and safe concurrent deletion/attachment.
+- [X] T066 [US4] Run US4 suites and storage adapter contract checks, recording evidence in `specs/001-industrial-dashboard/validation/us4.md`; prove no duplicate successes, exactly one primary and safe concurrent deletion/attachment.
 
 **Checkpoint**: Story works against its prerequisite fixtures; record passing checks before declaring it complete.
 

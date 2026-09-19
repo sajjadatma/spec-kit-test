@@ -1,0 +1,1 @@
+import { test,expect } from "@playwright/test"; test("product image route is protected",async({page})=>{await page.goto("http://localhost:3000/products/product/images");await expect(page).toHaveURL(/login/);});
