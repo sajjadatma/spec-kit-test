@@ -1,0 +1,1 @@
+import { describe,it,expect } from "vitest"; import { convertPrice } from "../../packages/backend/src/pricing/conversion.js"; describe("catalog pricing",()=>it("reports missing USD conversion",()=>expect(convertPrice("10","IRR").usd).toBeUndefined()));

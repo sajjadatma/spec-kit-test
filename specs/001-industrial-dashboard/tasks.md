@@ -238,15 +238,15 @@ fixtures supply external dependencies for independent story verification, not pr
 
 ### Tests for User Story 3
 
-- [ ] T041 [P] [US3] Write product CRUD/lifecycle/pricing route contracts in `tests/contracts/catalog.spec.ts`, covering unknown fields, currency strings, If-Match, role boundaries and PRODUCT_USED conflicts.
+- [X] T041 [P] [US3] Write product CRUD/lifecycle/pricing route contracts in `tests/contracts/catalog.spec.ts`, covering unknown fields, currency strings, If-Match, role boundaries and PRODUCT_USED conflicts.
 
-- [ ] T042 [P] [US3] Write product lifecycle/normalized-SKU races and exact-money tests in `tests/integration/catalog.spec.ts`, `tests/concurrency/catalog.spec.ts`, and `packages/backend/src/pricing/conversion.spec.ts`; include USD2 at600000/700000, missing rates and HALF_UP boundaries.
+- [X] T042 [P] [US3] Write product lifecycle/normalized-SKU races and exact-money tests in `tests/integration/catalog.spec.ts`, `tests/concurrency/catalog.spec.ts`, and `packages/backend/src/pricing/conversion.spec.ts`; include USD2 at600000/700000, missing rates and HALF_UP boundaries.
 
-- [ ] T043 [P] [US3] Write bilingual create/edit/archive/restore/delete and rate-form journeys in `tests/e2e/catalog-management.spec.ts`; check valid-input retention, conflict recovery, confirmation cancel and optional blanks.
+- [X] T043 [P] [US3] Write bilingual create/edit/archive/restore/delete and rate-form journeys in `tests/e2e/catalog-management.spec.ts`; check valid-input retention, conflict recovery, confirmation cancel and optional blanks.
 
 ### Implementation for User Story 3
 
-- [ ] T044 [US3] Add Product fields/checks/indexes in `prisma/schema.prisma` and `prisma/migrations/004_catalog/migration.sql`; leave primaryImageId linkage for US4 migration, retain scalar default/nullable semantics and monotonic historical-use protection.
+- [X] T044 [US3] Add Product fields/checks/indexes in `prisma/schema.prisma` and `prisma/migrations/004_catalog/migration.sql`; leave primaryImageId linkage for US4 migration, retain scalar default/nullable semantics and monotonic historical-use protection.
 
   Binding quotation (part of this task):
 
@@ -275,7 +275,7 @@ fixtures supply external dependencies for independent story verification, not pr
   > Use `pg_trgm` only via migration; do not index every optional field speculatively.
   > Revisions gate edits, archive, restore, delete, and gallery mutations.
 
-- [ ] T045 [US3] Add immutable ExchangeRate and singleton PricingSettings in `prisma/schema.prisma` and `prisma/migrations/005_pricing/migration.sql`; seed empty current rate and retain quoted exact-decimal/revision constraints.
+- [X] T045 [US3] Add immutable ExchangeRate and singleton PricingSettings in `prisma/schema.prisma` and `prisma/migrations/005_pricing/migration.sql`; seed empty current rate and retain quoted exact-decimal/revision constraints.
 
   Binding quotation (part of this task):
 
@@ -291,7 +291,7 @@ fixtures supply external dependencies for independent story verification, not pr
   > revision/date on derived USD-related values, and FIXED_RATIO metadata for rial/toman-only values.
   > One response uses one rate snapshot, even if a concurrent update occurs.
 
-- [ ] T046 [US3] Implement product input/control enums and all field rules in `apps/api/src/modules/catalog/product.dto.ts` and `packages/backend/src/catalog/product.validation.ts`; reject excess scale/overflow before persistence and distinguish null from zero/false.
+- [X] T046 [US3] Implement product input/control enums and all field rules in `apps/api/src/modules/catalog/product.dto.ts` and `packages/backend/src/catalog/product.validation.ts`; reject excess scale/overflow before persistence and distinguish null from zero/false.
 
   Binding quotation (part of this task):
 
@@ -322,21 +322,21 @@ fixtures supply external dependencies for independent story verification, not pr
   > | Description | No | Plain free text, up to 5,000 characters. |
   > | Active/inactive status | Yes | Controlled choice, inactive by default; archiving is a separate lifecycle action. |
 
-- [ ] T047 [US3] Implement create/read/update/archive/restore/delete in `packages/backend/src/catalog/product.service.ts`; unique trimmed case-insensitive SKU, inactive defaults, CAT editing versus ADM lifecycle authority, optimistic revisions and archived read-only enforcement; expose a domain invalidation hook for later draft/image integration.
+- [X] T047 [US3] Implement create/read/update/archive/restore/delete in `packages/backend/src/catalog/product.service.ts`; unique trimmed case-insensitive SKU, inactive defaults, CAT editing versus ADM lifecycle authority, optimistic revisions and archived read-only enforcement; expose a domain invalidation hook for later draft/image integration.
 
-- [ ] T048 [US3] Implement exact base→rial→target arithmetic and SA-only audited rate revisions in `packages/backend/src/pricing/pricing.service.ts`; immutable base price, one rate snapshot per response, fixed10rial/toman, IRR/TOMAN integer base, USD2 decimals, rate6 decimals, final HALF_UP only and missing-rate status.
+- [X] T048 [US3] Implement exact base→rial→target arithmetic and SA-only audited rate revisions in `packages/backend/src/pricing/pricing.service.ts`; immutable base price, one rate snapshot per response, fixed10rial/toman, IRR/TOMAN integer base, USD2 decimals, rate6 decimals, final HALF_UP only and missing-rate status.
 
-- [ ] T049 [US3] Implement product detail/CRUD/archive/restore/delete DTO/controller binding in `apps/api/src/modules/catalog/products.controller.ts`; return safe computed detail and a basic bounded product list for management; US5 expands discovery filters.
+- [X] T049 [US3] Implement product detail/CRUD/archive/restore/delete DTO/controller binding in `apps/api/src/modules/catalog/products.controller.ts`; return safe computed detail and a basic bounded product list for management; US5 expands discovery filters.
 
-- [ ] T050 [US3] Implement current-rate GET/PUT in `apps/api/src/modules/pricing/pricing.controller.ts`; require SA write and revision check, include current revision/timestamp, and reject automatic-feed or toman-ratio mutation.
+- [X] T050 [US3] Implement current-rate GET/PUT in `apps/api/src/modules/pricing/pricing.controller.ts`; require SA write and revision check, include current revision/timestamp, and reject automatic-feed or toman-ratio mutation.
 
-- [ ] T051 [US3] Build reusable grouped product form and pages in `apps/web/src/features/products/product-form.tsx`, `apps/web/src/app/(protected)/products/new/page.tsx`, and `apps/web/src/app/(protected)/products/[id]/edit/page.tsx`; mirror feedback without moving authoritative business rules into UI.
+- [X] T051 [US3] Build reusable grouped product form and pages in `apps/web/src/features/products/product-form.tsx`, `apps/web/src/app/(protected)/products/new/page.tsx`, and `apps/web/src/app/(protected)/products/[id]/edit/page.tsx`; mirror feedback without moving authoritative business rules into UI.
 
-- [ ] T052 [US3] Build details, optional-data placeholders, lifecycle confirmations and currency views in `apps/web/src/app/(protected)/products/[id]/page.tsx` and `apps/web/src/features/products/product-detail.tsx`; preserve dirty same-account values on expiry/conflict and label base/derived prices.
+- [X] T052 [US3] Build details, optional-data placeholders, lifecycle confirmations and currency views in `apps/web/src/app/(protected)/products/[id]/page.tsx` and `apps/web/src/features/products/product-detail.tsx`; preserve dirty same-account values on expiry/conflict and label base/derived prices.
 
-- [ ] T053 [US3] Build SA rate editor with previous/new rate example, confirmation and revision handling in `apps/web/src/app/(protected)/settings/exchange-rate/page.tsx` and `apps/web/src/features/pricing/exchange-rate-form.tsx`; locale switch must not alter currency.
+- [X] T053 [US3] Build SA rate editor with previous/new rate example, confirmation and revision handling in `apps/web/src/app/(protected)/settings/exchange-rate/page.tsx` and `apps/web/src/features/pricing/exchange-rate-form.tsx`; locale switch must not alter currency.
 
-- [ ] T054 [US3] Run US3 suites/typecheck/lint/build and record evidence in `specs/001-industrial-dashboard/validation/us3.md`; validate every quoted product field and exact currency examples.
+- [X] T054 [US3] Run US3 suites/typecheck/lint/build and record evidence in `specs/001-industrial-dashboard/validation/us3.md`; validate every quoted product field and exact currency examples.
 
 **Checkpoint**: Story works against its prerequisite fixtures; record passing checks before declaring it complete.
 

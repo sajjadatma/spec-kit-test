@@ -1,0 +1,2 @@
+CREATE TABLE "ExchangeRate" ("id" uuid PRIMARY KEY, "rialsPerUsd" numeric(24,6) NOT NULL CHECK ("rialsPerUsd">0), "previousRateId" uuid UNIQUE REFERENCES "ExchangeRate"("id"), "actorId" uuid NOT NULL REFERENCES "User"("id"), "effectiveAt" timestamptz NOT NULL DEFAULT now());
+CREATE TABLE "PricingSettings" ("id" text PRIMARY KEY DEFAULT 'pricing', "currentRateId" uuid UNIQUE REFERENCES "ExchangeRate"("id"), "revision" integer NOT NULL DEFAULT 0); INSERT INTO "PricingSettings" ("id") VALUES ('pricing');

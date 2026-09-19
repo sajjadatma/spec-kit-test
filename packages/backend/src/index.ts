@@ -15,5 +15,8 @@ export { RateLimitService } from "./identity/rate-limit.service.js";
 export type { RateLimitScope, RateLimitStore } from "./identity/rate-limit.service.js";
 export { UserManagementService } from "./identity/user-management.service.js";
 export type { Actor, FixedRole, UserSummary } from "./identity/user-management.service.js";
+export { ProductService } from "./catalog/product.service.js";
+export { convertPrice } from "./pricing/conversion.js";
+export { PricingService } from "./pricing/pricing.service.js";
 export { ResetEmailOutboxService } from "./infrastructure/mail/outbox.service.js";
 export type { ClaimedResetEmail, ResetEmailOutboxStore } from "./infrastructure/mail/outbox.service.js";

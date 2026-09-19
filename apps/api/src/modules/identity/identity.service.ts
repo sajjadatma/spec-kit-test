@@ -7,6 +7,8 @@ import {
   RateLimitService,
   SessionService,
   UserManagementService,
+  ProductService,
+  PricingService,
   createPrismaClient,
   normalizeEmail,
   ResetMailCipher,
@@ -23,6 +25,8 @@ export class IdentityService implements OnModuleDestroy {
   private readonly limits = new RateLimitService(this.store, process.env.TOKEN_HASH_SECRET ?? "");
   private readonly resetCipher = new ResetMailCipher();
   private readonly users = new UserManagementService(this.prisma);
+  private readonly products = new ProductService(this.prisma);
+  private readonly pricing = new PricingService(this.prisma);
 
   register(displayName: string, email: string, password: string, locale: "fa" | "en") {
     return this.registration.register(displayName, email, password, locale);
@@ -83,6 +87,8 @@ export class IdentityService implements OnModuleDestroy {
   setAccess(actor: { id: string; role: "SUPER_ADMIN" | "ADMIN" | "PRODUCT_MANAGER" | "USER" }, id: string, disabled: boolean, revision?: number) { return this.users.setAccess(actor, id, disabled, revision); }
   setRole(actor: { id: string; role: "SUPER_ADMIN" | "ADMIN" | "PRODUCT_MANAGER" | "USER" }, id: string, role: "SUPER_ADMIN" | "ADMIN" | "PRODUCT_MANAGER" | "USER", revision?: number) { return this.users.setRole(actor, id, role, revision); }
   fixedRoles(actor: { id: string; role: "SUPER_ADMIN" | "ADMIN" | "PRODUCT_MANAGER" | "USER" }) { return this.users.fixedRoles(actor); }
+  productsList(actor: never) { return this.products.list(actor); } productGet(actor: never, id: string) { return this.products.get(actor, id); } productCreate(actor: never, body: object) { return this.products.create(actor, body as Record<string, unknown>); } productUpdate(actor: never, id: string, body: object, revision?: number) { return this.products.update(actor, id, body as Record<string, unknown>, revision); } productArchive(actor: never, id: string, revision?: number) { return this.products.archive(actor, id, revision); } productRestore(actor: never, id: string, revision?: number) { return this.products.restore(actor, id, revision); } productRemove(actor: never, id: string, revision?: number) { return this.products.remove(actor, id, revision); }
+  currentRate(){return this.pricing.current();} setRate(actor:{id:string;role:string},rate:string,revision:number){return this.pricing.set(actor.id,actor.role,rate,revision);}
 
   onModuleDestroy() {
     return this.prisma.$disconnect();

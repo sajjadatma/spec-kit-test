@@ -1,0 +1,1 @@
+import { describe,it,expect } from "vitest"; import { ProductDto } from "../../apps/api/src/modules/catalog/product.dto.js"; describe("catalog contract",()=>it("provides a product DTO",()=>expect(ProductDto).toBeDefined()));

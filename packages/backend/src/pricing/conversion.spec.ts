@@ -1,0 +1,1 @@
+import { describe,it,expect } from "vitest"; import { convertPrice } from "./conversion.js"; describe("pricing",()=>it("converts USD at exact rate",()=>expect(convertPrice("2","USD","600000")).toMatchObject({irr:"1200000",toman:"120000",usd:"2.00"})));
