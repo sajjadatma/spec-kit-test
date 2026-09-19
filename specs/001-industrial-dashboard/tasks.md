@@ -474,11 +474,11 @@ fixtures supply external dependencies for independent story verification, not pr
 
 - [ ] T074 [P] [US6] Write job lease/fencing, eligibility/idempotency, product-change snapshots and active-slot acceptance races in `tests/integration/generation.spec.ts` and `tests/concurrency/generation.spec.ts`; use deterministic failure adapters and real Postgres.
 
-- [ ] T075 [P] [US6] Write bilingual floor/wall/both, draft persistence, language-switch, navigation, progress, result and retry journeys in `tests/e2e/generation.spec.ts`; verify no duplicate submit and no fabricated percentage.
+- [ ] T075 [P] [US6] Create development/test fixtures for an approved USER, 256px room image, and active compatible products with READY primary images in `prisma/seed.ts` and `tests/helpers/fixtures.ts`; write bilingual floor/wall/both, draft persistence, language-switch, navigation, progress, result and retry journeys in `tests/e2e/generation.spec.ts`; verify no duplicate submit and no fabricated percentage.
 
 ### Implementation for User Story 6
 
-- [ ] T076 [US6] Add RoomDraft and VisualizationSession plus room-target UploadReceipt constraints in `prisma/schema.prisma` and `prisma/migrations/009_visualization_sessions/migration.sql`; activate both-target exclusivity only once room relations exist.
+- [ ] T076 [US6] Add RoomDraft and VisualizationSession in `prisma/schema.prisma` and `prisma/migrations/009_visualization_sessions/migration.sql`; add room-asset and draft-expiry follow-up constraints in separately named migrations, and activate both-target exclusivity only once room relations exist.
 
   Binding quotation (part of this task):
 
@@ -499,7 +499,7 @@ fixtures supply external dependencies for independent story verification, not pr
   > Deleted session becomes an inaccessible minimal tombstone used for cleanup/restore safety;
   > full snapshots and image references are removed during cleanup. No public listing of tombstones.
 
-- [ ] T077 [US6] Add GenerationAttempt/AttemptSurface, partial active-owner uniqueness and typed BackgroundJob targets in `prisma/schema.prisma` and `prisma/migrations/010_generation_attempts/migration.sql`; include a persisted dispatch marker/fence and captured consent policy version required by integrations.
+- [ ] T077 [US6] Add GenerationAttempt/AttemptSurface, partial active-owner uniqueness and typed BackgroundJob targets in `prisma/schema.prisma`; use `010_generation_attempts` for the base attempt schema and separately named migrations for jobs, consent, results, and snapshots; include a persisted dispatch marker/fence and captured consent policy version required by integrations.
 
   Binding quotation (part of this task):
 
@@ -536,9 +536,9 @@ fixtures supply external dependencies for independent story verification, not pr
 
 - [ ] T079 [US6] Define ImageGenerationService and deterministic adapter in `packages/backend/src/infrastructure/images/image-generation.ts` and `packages/backend/src/infrastructure/images/fake.adapter.ts`; accept room/reference bytes, surface context, deadline and effective parameters without SDK types in domain code.
 
-- [ ] T080 [US6] Implement configurable image-edit adapter in `packages/backend/src/infrastructure/images/openai.adapter.ts` and server prompt in `packages/backend/src/infrastructure/images/prompts/room-surfaces-v1.ts`; verify configured model capabilities against current official docs before live use, send room first/one reference per surface, disable uncertain implicit retries, and keep one output/no Files conversation state.
+- [ ] T080 [US6] Implement configurable image-edit adapter in `packages/backend/src/infrastructure/images/openai.adapter.ts` and server prompt in `packages/backend/src/infrastructure/images/prompts/room-surfaces-v1.ts`; before live use record model, official OpenAI documentation URL, verification date, input/output capability, and retention note in `validation/us6.md`; send room first/one reference per surface, disable uncertain implicit retries, and keep one output/no Files conversation state.
 
-- [ ] T081 [US6] Implement atomic eligibility/revision/consent/account checks and submission in `packages/backend/src/visualization/accept-attempt.service.ts`; capture immutable product/reference context, set everVisualized, allocate session/attempt/job and one active slot, and return original receipt for identical key/payload.
+- [ ] T081 [US6] Implement atomic eligibility/revision/consent/account checks and submission in `packages/backend/src/visualization/accept-attempt.service.ts`; return `ROOM_IMAGE_REQUIRED`, `PRODUCT_REFERENCE_REQUIRED`, `CONSENT_REQUIRED`, `ATTEMPT_ACTIVE`, or `REVISION_CONFLICT` as applicable; capture immutable product/reference context, set everVisualized, allocate session/attempt/job and one active slot, and return original receipt for identical key/payload.
 
 - [ ] T082 [US6] Implement generation job handler in `apps/worker/src/handlers/generation.handler.ts`; persist possible-dispatch before external call, fence all writes, cap safe retries to two, heartbeat15s/lease60s, and fail OUTCOME_UNKNOWN rather than create a duplicate paid request.
 
@@ -554,7 +554,7 @@ fixtures supply external dependencies for independent story verification, not pr
 
 - [ ] T088 [US6] Wire draft expiry, staged/result cleanup and recovery handlers in `apps/worker/src/handlers/draft-expiry.handler.ts` and `packages/backend/src/visualization/recovery.service.ts`; preserve submitted sessions indefinitely, reconcile elapsed deadlines before reads, and keep deleted-receipt replays from recreating work.
 
-- [ ] T089 [US6] Run US6 contract/job/race/browser suites and record evidence in `specs/001-industrial-dashboard/validation/us6.md`; demonstrate accepted status≤2s, terminal≤10min including queue time, navigation survival, captured inputs and no uncertain automatic duplicate.
+- [ ] T089 [US6] Run US6 contract/job/race/browser suites and record evidence in `specs/001-industrial-dashboard/validation/us6.md`; demonstrate navigation survival, captured inputs, idempotent submit, and no uncertain automatic duplicate. Record accepted-status≤2s and terminal≤10min measurements when fixture-driven timing instrumentation is available; Phase 11 owns load, recovery, security, usability, and real-provider release measurements.
 
 **Checkpoint**: Story works against its prerequisite fixtures; record passing checks before declaring it complete.
 
@@ -753,7 +753,7 @@ After the story prerequisites above pass, author these disjoint test files toget
 
 - `T073`: Write room-draft/upload/policy/attempt submission/detail/content contracts in `tests/contracts/generation.spec.ts`; include virtual empty GET without writes, draft revision, consent version and request idempotency.
 - `T074`: Write job lease/fencing, eligibility/idempotency, product-change snapshots and active-slot acceptance races in `tests/integration/generation.spec.ts` and `tests/concurrency/generation.spec.ts`; use deterministic failure adapters and real Postgres.
-- `T075`: Write bilingual floor/wall/both, draft persistence, language-switch, navigation, progress, result and retry journeys in `tests/e2e/generation.spec.ts`; verify no duplicate submit and no fabricated percentage.
+- `T075`: Create approved-user/room-image/compatible-product fixtures, then write bilingual floor/wall/both, draft persistence, language-switch, navigation, progress, result and retry journeys in `tests/e2e/generation.spec.ts`; verify no duplicate submit and no fabricated percentage.
 
 Then execute the implementation tasks in listed order and run all story tests. No shared-schema task in this phase is marked parallel.
 

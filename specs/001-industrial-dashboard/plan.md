@@ -58,6 +58,18 @@ selected floor/wall surface. No automatic history expiry. All configuration exte
 criteria including five clarified decisions. No ecommerce, ERP, warehouse automation, native
 apps, AR/3D, automatic FX feed, or editable role definitions.
 
+**US6 provider decision**: Production image editing uses the configured OpenAI image-edit model
+only after a maintainer verifies its image-input, single-output, and retention capabilities in
+the official OpenAI documentation. That verification records the model identifier, documentation
+URL, date, and retention note in `validation/us6.md`. The fake adapter is the only adapter used
+by automated tests. `PROVIDER_OUTCOME_UNKNOWN` is terminal and never triggers an automatic
+paid retry.
+
+**Completion boundaries**: A story checkpoint requires its implemented test suites, typecheck,
+lint, migrations, and story evidence. Cross-product load, recovery, security, usability, and
+real-provider evaluation remain Phase 11 release gates and must not be presented as measured
+story outcomes.
+
 ## Constitution Check
 
 Gate evaluated before research and re-evaluated after Phase 1: **PASS at design level**.

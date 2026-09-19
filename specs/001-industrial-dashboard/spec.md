@@ -191,6 +191,11 @@ combined requests, including progress, failure, and return-after-navigation beha
    **Then** its status and any completed result remain accessible without restarting it.
 7. **Given** a failed or timed-out attempt, **When** retry is requested, **Then** a new linked
    attempt uses the retained inputs after eligibility checks; the failed attempt remains visible.
+8. **Given** an attempt request, **When** validation or dispatch cannot proceed, **Then** the
+   API returns one of `ROOM_IMAGE_REQUIRED`, `PRODUCT_REFERENCE_REQUIRED`, `CONSENT_REQUIRED`,
+   `ATTEMPT_ACTIVE`, `REVISION_CONFLICT`, `GENERATION_TIMEOUT`, or
+   `PROVIDER_OUTCOME_UNKNOWN`; terminal attempts never return to an active status. A retry is
+   offered only for a terminal failed attempt and always creates a new attempt.
 
 ### User Story 7 - Revisit and Vary Visualizations (Priority: P2)
 
