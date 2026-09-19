@@ -1,0 +1,5 @@
+import { Controller, Delete, Get, Inject, Param, Query, Req } from "@nestjs/common";
+import { IsIn, IsInt, IsOptional, IsUUID, Max, Min } from "class-validator";
+import { IdentityService } from "../identity/identity.service.js";
+class HistoryQuery { @IsOptional() @IsInt() @Min(1) page?: number; @IsOptional() @IsInt() @Min(1) @Max(100) pageSize?: number; @IsOptional() @IsIn(["PREPARING","GENERATING","COMPLETED","FAILED"]) status?: "PREPARING"|"GENERATING"|"COMPLETED"|"FAILED"; @IsOptional() @IsUUID() ownerId?: string }
+@Controller("visualizations") export class HistoryController { constructor(@Inject(IdentityService) private readonly identity: IdentityService) {} @Get() async list(@Req() request: { user: never }, @Query() query: HistoryQuery) { return { data: await this.identity.listHistory(request.user, query) }; } @Delete(":sessionId") async remove(@Req() request:{user:never},@Param("sessionId") sessionId:string){return{data:await this.identity.deleteVisualizationSession(request.user,sessionId)}} }

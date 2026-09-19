@@ -42,3 +42,8 @@ export { GenerationRecoveryService } from "./visualization/recovery.service.js";
 export { VariationService } from "./visualization/variation.service.js";
 
 export { AcceptAttemptService } from "./visualization/accept-attempt.service.js";
+
+export { HistoryService } from "./visualization/history.service.js";
+export type { HistoryActor } from "./visualization/history.service.js";
+
+export { DeleteSessionService } from "./visualization/delete-session.service.js";

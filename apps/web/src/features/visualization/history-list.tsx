@@ -1,0 +1,6 @@
+"use client";
+import { useEffect, useState } from "react";
+import { SessionDeleteDialog } from "./session-delete-dialog";
+import { apiFetch } from "../../lib/api/client";
+type Attempt={id:string;status:string;acceptedAt:string}; type Session={id:string;attempts:Attempt[]}; type History={items:Session[];total:number};
+export function HistoryList(){const[data,setData]=useState<History>();const[status,setStatus]=useState("");useEffect(()=>{void apiFetch<History>(`/visualizations${status?`?status=${status}`:""}`).then(setData)},[status]);return <section><h1>Visualization history</h1><label>Status <select value={status} onChange={e=>setStatus(e.target.value)}><option value="">All</option><option>PREPARING</option><option>GENERATING</option><option>COMPLETED</option><option>FAILED</option></select></label><p>{data?`${data.total} sessions`:"Loading…"}</p><ul>{data?.items.map(session=><li key={session.id}><a href={`/visualizations/${session.attempts[0]?.id}`}>{session.attempts[0]?.status??"No attempts"}</a><SessionDeleteDialog sessionId={session.id} onDeleted={()=>setData(current=>current?{...current,items:current.items.filter(item=>item.id!==session.id),total:current.total-1}:current)}/></li>)}</ul></section>}

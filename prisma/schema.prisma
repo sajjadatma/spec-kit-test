@@ -142,6 +142,7 @@ model User {
   exchangeRates         ExchangeRate[]
   assets                FileAsset[]
   visualizationSessions VisualizationSession[]
+  deletedVisualizationSessions VisualizationSession[] @relation("SessionDeletedBy")
   generationAttempts    GenerationAttempt[]
   roomDraft             RoomDraft?
 
@@ -231,7 +232,9 @@ model VisualizationSession {
   ownerId   String              @db.Uuid
   createdAt DateTime            @default(now()) @db.Timestamptz(6)
   deletedAt DateTime?           @db.Timestamptz(6)
+  deletedById String?           @db.Uuid
   owner     User                @relation(fields: [ownerId], references: [id])
+  deletedBy User?               @relation("SessionDeletedBy", fields: [deletedById], references: [id], onDelete: Restrict)
   attempts  GenerationAttempt[]
 }
 
