@@ -1,0 +1,1 @@
+import { describe,it,expect } from "vitest"; import { ProductQueryDto } from "../../apps/api/src/modules/catalog/product-query.dto.js"; describe("search",()=>it("defaults to a bounded page",()=>expect(new ProductQueryDto().pageSize).toBe(24)));

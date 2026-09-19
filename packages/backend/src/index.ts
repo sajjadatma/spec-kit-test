@@ -20,6 +20,7 @@ export { convertPrice } from "./pricing/conversion.js";
 export { PricingService } from "./pricing/pricing.service.js";
 export { GalleryService } from "./catalog/gallery.service.js";
 export { UploadService } from "./media/upload.service.js";
+export { ProductQueryService } from "./catalog/product-query.service.js";
 export { LocalStorageAdapter } from "./infrastructure/storage/local.adapter.js";
 export { StorageService } from "./infrastructure/storage/storage.service.js";
 export { ResetEmailOutboxService } from "./infrastructure/mail/outbox.service.js";

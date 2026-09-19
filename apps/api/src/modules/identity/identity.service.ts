@@ -11,6 +11,7 @@ import {
   PricingService,
   UploadService,
   GalleryService,
+  ProductQueryService,
   createPrismaClient,
   normalizeEmail,
   ResetMailCipher,
@@ -31,6 +32,7 @@ export class IdentityService implements OnModuleDestroy {
   private readonly pricing = new PricingService(this.prisma);
   private readonly uploads = new UploadService(this.prisma);
   private readonly gallery = new GalleryService(this.prisma);
+  private readonly productQuery = new ProductQueryService(this.prisma);
 
   register(displayName: string, email: string, password: string, locale: "fa" | "en") {
     return this.registration.register(displayName, email, password, locale);
@@ -94,6 +96,7 @@ export class IdentityService implements OnModuleDestroy {
   productsList(actor: never) { return this.products.list(actor); } productGet(actor: never, id: string) { return this.products.get(actor, id); } productCreate(actor: never, body: object) { return this.products.create(actor, body as Record<string, unknown>); } productUpdate(actor: never, id: string, body: object, revision?: number) { return this.products.update(actor, id, body as Record<string, unknown>, revision); } productArchive(actor: never, id: string, revision?: number) { return this.products.archive(actor, id, revision); } productRestore(actor: never, id: string, revision?: number) { return this.products.restore(actor, id, revision); } productRemove(actor: never, id: string, revision?: number) { return this.products.remove(actor, id, revision); }
   currentRate(){return this.pricing.current();} setRate(actor:{id:string;role:string},rate:string,revision:number){return this.pricing.set(actor.id,actor.role,rate,revision);}
   upload(id:string,bytes:Buffer,type:string,width:number,height:number){return this.uploads.register(id,bytes,type,width,height)} attachImage(productId:string,assetId:string,actorId:string){return this.gallery.attach(productId,assetId,actorId)} primaryImage(productId:string,imageId:string,actorId:string){return this.gallery.setPrimary(productId,imageId,actorId)} removeImage(productId:string,imageId:string,actorId:string){return this.gallery.remove(productId,imageId,actorId)}
+  searchProducts(actor:never,query:object){return this.productQuery.search(actor,query as never)}
 
   onModuleDestroy() {
     return this.prisma.$disconnect();

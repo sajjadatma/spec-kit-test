@@ -444,19 +444,19 @@ fixtures supply external dependencies for independent story verification, not pr
 
 ### Tests for User Story 5
 
-- [ ] T067 [P] [US5] Write discovery query/response and surface-picker contract tests in `tests/contracts/product-search.spec.ts`; include default24/max100 paging, stable name/SKU order and bounded counts.
+- [X] T067 [P] [US5] Write discovery query/response and surface-picker contract tests in `tests/contracts/product-search.spec.ts`; include default24/max100 paging, stable name/SKU order and bounded counts.
 
-- [ ] T068 [P] [US5] Write query integration and bilingual browser tests in `tests/integration/product-search.spec.ts` and `tests/e2e/product-discovery.spec.ts`; use active/inactive/archive/compatibility/no-image fixtures, empty results and back navigation.
+- [X] T068 [P] [US5] Write query integration and bilingual browser tests in `tests/integration/product-search.spec.ts` and `tests/e2e/product-discovery.spec.ts`; use active/inactive/archive/compatibility/no-image fixtures, empty results and back navigation.
 
 ### Implementation for User Story 5
 
-- [ ] T069 [US5] Implement indexed bounded discovery in `packages/backend/src/catalog/product-query.service.ts` and query DTOs in `apps/api/src/modules/catalog/product-query.dto.ts`; partial case-insensitive search, AND filter types/OR values, exact width/height orientation, and selectionSurface cannot bypass active/compatible/usable-primary rules.
+- [X] T069 [US5] Implement indexed bounded discovery in `packages/backend/src/catalog/product-query.service.ts` and query DTOs in `apps/api/src/modules/catalog/product-query.dto.ts`; partial case-insensitive search, AND filter types/OR values, exact width/height orientation, and selectionSurface cannot bypass active/compatible/usable-primary rules.
 
-- [ ] T070 [US5] Profile representative queries and add justified name/SKU trigram or filter indexes through `prisma/migrations/008_catalog_search/migration.sql`; record EXPLAIN evidence in `specs/001-industrial-dashboard/validation/search-query-plans.md` and avoid speculative indexes.
+- [X] T070 [US5] Profile representative queries and add justified name/SKU trigram or filter indexes through `prisma/migrations/008_catalog_search/migration.sql`; record EXPLAIN evidence in `specs/001-industrial-dashboard/validation/search-query-plans.md` and avoid speculative indexes.
 
-- [ ] T071 [US5] Implement reusable filterable grid and picker in `apps/web/src/features/products/catalog.tsx`, `apps/web/src/features/products/product-picker.tsx`, and `apps/web/src/app/(protected)/products/page.tsx`; retain query/paging in navigation, show images/placeholders and hide inaccessible status controls.
+- [X] T071 [US5] Implement reusable filterable grid and picker in `apps/web/src/features/products/catalog.tsx`, `apps/web/src/features/products/product-picker.tsx`, and `apps/web/src/app/(protected)/products/page.tsx`; retain query/paging in navigation, show images/placeholders and hide inaccessible status controls.
 
-- [ ] T072 [US5] Integrate GET products with query service, run US5 suites and record measured search evidence in `specs/001-industrial-dashboard/validation/us5.md`; verify ordinary USER cannot discover inactive/archived records via direct query.
+- [X] T072 [US5] Integrate GET products with query service, run US5 suites and record measured search evidence in `specs/001-industrial-dashboard/validation/us5.md`; verify ordinary USER cannot discover inactive/archived records via direct query.
 
 **Checkpoint**: Story works against its prerequisite fixtures; record passing checks before declaring it complete.
 
