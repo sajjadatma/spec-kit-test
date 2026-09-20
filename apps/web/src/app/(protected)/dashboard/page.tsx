@@ -1,1 +1,1 @@
-export default function DashboardPage() { return <section><h1>Dashboard</h1><p>Welcome. Choose a workspace to continue.</p><nav aria-label="Dashboard destinations"><ul><li><a href="/products">Products</a></li><li><a href="/visualization">AI visualization</a></li><li><a href="/history">Visualization history</a></li></ul></nav></section>; }
+import { Dashboard } from "../../../features/dashboard/dashboard";export default function DashboardPage(){return <Dashboard/>}

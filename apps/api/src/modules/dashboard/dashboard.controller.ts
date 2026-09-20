@@ -1,0 +1,1 @@
+import { Controller, Get, Inject, Req } from "@nestjs/common";import { IdentityService } from "../identity/identity.service.js";@Controller("dashboard") export class DashboardController{constructor(@Inject(IdentityService)private readonly identity:IdentityService){}@Get()async get(@Req()request:{user:never}){return{data:await this.identity.dashboard(request.user)}}}

@@ -1,0 +1,1 @@
+export function AppNavigation(){return <nav aria-label="Application"><a href="/dashboard">Dashboard</a><a href="/products">Products</a><a href="/visualization">AI Visualization</a><a href="/visualizations">History</a></nav>}

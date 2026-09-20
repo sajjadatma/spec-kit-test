@@ -10,6 +10,7 @@ import { DraftsController } from "../visualization/drafts.controller.js";
 import { AttemptsController } from "../visualization/attempts.controller.js";
 import { HistoryController } from "../visualization/history.controller.js";
 import { VisualizationPolicyController } from "../visualization/policy.controller.js";
+import { DashboardController } from "../dashboard/dashboard.controller.js";
 import { IdentityService } from "./identity.service.js";
-@Module({ controllers: [AuthController, PreferencesController, UsersController, ProductsController, PricingController, UploadsController, ProductImagesController, DraftsController, AttemptsController, VisualizationPolicyController, HistoryController], providers: [IdentityService] })
+@Module({ controllers: [AuthController, PreferencesController, UsersController, ProductsController, PricingController, UploadsController, ProductImagesController, DraftsController, AttemptsController, VisualizationPolicyController, HistoryController, DashboardController], providers: [IdentityService] })
 export class IdentityModule {}

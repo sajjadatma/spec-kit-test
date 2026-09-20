@@ -17,6 +17,7 @@ import {
   AcceptAttemptService,
   HistoryService,
   DeleteSessionService,
+  DashboardService,
   createPrismaClient,
   LocalStorageAdapter,
   StorageService,
@@ -46,6 +47,7 @@ export class IdentityService implements OnModuleDestroy {
   private readonly acceptAttempts = new AcceptAttemptService(this.attempts);
   private readonly history = new HistoryService(this.prisma);
   private readonly deleteSessions = new DeleteSessionService(this.prisma);
+  private readonly dashboardService = new DashboardService(this.prisma);
 
   register(displayName: string, email: string, password: string, locale: "fa" | "en") {
     return this.registration.register(displayName, email, password, locale);
@@ -110,6 +112,7 @@ export class IdentityService implements OnModuleDestroy {
   currentRate(){return this.pricing.current();} setRate(actor:{id:string;role:string},rate:string,revision:number){return this.pricing.set(actor.id,actor.role,rate,revision);}
   async upload(id:string,bytes:Buffer,type:string,width:number,height:number){const asset=await this.uploads.register(id,bytes,type,width,height);await this.storage.put(asset.storageKey,bytes);return asset} attachImage(productId:string,assetId:string,actorId:string){return this.gallery.attach(productId,assetId,actorId)} primaryImage(productId:string,imageId:string,actorId:string){return this.gallery.setPrimary(productId,imageId,actorId)} removeImage(productId:string,imageId:string,actorId:string){return this.gallery.remove(productId,imageId,actorId)}
   searchProducts(actor:never,query:object){return this.productQuery.search(actor,query as never)}
+  dashboard(actor:{id:string;role:"SUPER_ADMIN"|"ADMIN"|"PRODUCT_MANAGER"|"USER"}){return this.dashboardService.summary(actor)}
   deleteVisualizationSession(actor:{id:string;role:"SUPER_ADMIN"|"ADMIN"|"PRODUCT_MANAGER"|"USER"},sessionId:string){return this.deleteSessions.delete(actor,sessionId)}
   listHistory(actor:{id:string;role:"SUPER_ADMIN"|"ADMIN"|"PRODUCT_MANAGER"|"USER"},query:object){return this.history.list(actor,query as never)}
   getDraft(id:string){return this.drafts.get(id)} saveDraft(id:string,input:object,revision:number){return this.drafts.save(id,input as never,revision)} discardDraft(id:string){return this.drafts.discard(id)}

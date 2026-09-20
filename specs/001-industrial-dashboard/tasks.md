@@ -604,11 +604,11 @@ fixtures supply external dependencies for independent story verification, not pr
 
 ### Implementation for User Story 8
 
-- [ ] T100 [US8] Implement scoped aggregate queries in `packages/backend/src/dashboard/dashboard.service.ts` and GET dashboard in `apps/api/src/modules/dashboard/dashboard.controller.ts`; avoid N+1, personalized no-store and count/destination filter mismatch.
+- [X] T100 [US8] Implement scoped aggregate queries in `packages/backend/src/dashboard/dashboard.service.ts` and GET dashboard in `apps/api/src/modules/dashboard/dashboard.controller.ts`; avoid N+1, personalized no-store and count/destination filter mismatch.
 
-- [ ] T101 [US8] Complete dashboard and reusable navigation in `apps/web/src/app/(protected)/dashboard/page.tsx`, `apps/web/src/features/dashboard/dashboard.tsx`, and `apps/web/src/components/app-navigation.tsx`; Products/Visualization/History plus permitted AddProduct/UserManagement and SA exchange-rate destination.
+- [X] T101 [US8] Complete dashboard and reusable navigation in `apps/web/src/app/(protected)/dashboard/page.tsx`, `apps/web/src/features/dashboard/dashboard.tsx`, and `apps/web/src/components/app-navigation.tsx`; Products/Visualization/History plus permitted AddProduct/UserManagement and SA exchange-rate destination.
 
-- [ ] T102 [US8] Run US8 and cross-route locale/accessibility checks, recording evidence in `specs/001-industrial-dashboard/validation/us8.md`; verify loading/empty/error states, focus order and full en/fa dictionary coverage.
+- [X] T102 [US8] Run US8 and cross-route locale/accessibility checks, recording evidence in `specs/001-industrial-dashboard/validation/us8.md`; verify loading/empty/error states, focus order and full en/fa dictionary coverage.
 
 **Checkpoint**: Story works against its prerequisite fixtures; record passing checks before declaring it complete.
 

@@ -47,3 +47,6 @@ export { HistoryService } from "./visualization/history.service.js";
 export type { HistoryActor } from "./visualization/history.service.js";
 
 export { DeleteSessionService } from "./visualization/delete-session.service.js";
+
+export { DashboardService } from "./dashboard/dashboard.service.js";
+export type { DashboardActor } from "./dashboard/dashboard.service.js";
